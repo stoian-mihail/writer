@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBinshopsConfigurationsTable extends Migration
+class CreateFragmentCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateBinshopsConfigurationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('binshops_configurations', function (Blueprint $table) {
-            $table->string("key")->primary();
-            $table->string("value");
+        Schema::create('fragment_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateBinshopsConfigurationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('binshops_configurations');
+        Schema::dropIfExists('fragment_categories');
     }
 }

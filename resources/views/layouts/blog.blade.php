@@ -74,6 +74,9 @@
                 <a class="nav-link" href="#">Despre mine</a>
               </li>
               <li class="nav-item mx-2">
+                <a class="nav-link" href="{{route('catalog.news')}}">Evenimente</a>
+              </li>
+              <li class="nav-item mx-2">
                 <a class="nav-link" href="#">Blog</a>
               </li>
               <li class="nav-item mx-2 dropdown">

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FragmentType;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
-class FragmentTypeController extends Controller
+class ProductCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class FragmentTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\FragmentType  $fragmentType
+     * @param  \App\Models\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function show(FragmentType $fragmentType)
+    public function show(ProductCategory $productCategory)
     {
         //
     }
@@ -52,10 +52,10 @@ class FragmentTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\FragmentType  $fragmentType
+     * @param  \App\Models\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function edit(FragmentType $fragmentType)
+    public function edit(ProductCategory $productCategory)
     {
         //
     }
@@ -64,10 +64,10 @@ class FragmentTypeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\FragmentType  $fragmentType
+     * @param  \App\Models\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FragmentType $fragmentType)
+    public function update(Request $request, ProductCategory $productCategory)
     {
         //
     }
@@ -75,10 +75,10 @@ class FragmentTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\FragmentType  $fragmentType
+     * @param  \App\Models\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FragmentType $fragmentType)
+    public function destroy(ProductCategory $productCategory)
     {
         //
     }

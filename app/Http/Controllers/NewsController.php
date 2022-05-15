@@ -28,7 +28,8 @@ class NewsController extends Controller
      */
     public function index()
     {
-        //
+        $news = News::all();
+        return view('catalog.news.index', compact('news'));
     }
     public function indexAdmin()
     {
@@ -98,7 +99,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        //
+        return view('catalog.news.show', ['news'=>$news]);
     }
 
     /**

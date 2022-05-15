@@ -10,6 +10,11 @@ class News extends Model
     use HasFactory;
     protected $guarded = [];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function photo(){
         return $this->hasOne(NewsPhoto::class, 'news_id');
     }

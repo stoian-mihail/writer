@@ -23,6 +23,7 @@ class CreateNewsTable extends Migration
             $table->date('date')->nullable();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('news_categories')->onDelete('cascade');
+            $table->boolean('is_main')->default(false);
             $table->timestamps();
         });
     }

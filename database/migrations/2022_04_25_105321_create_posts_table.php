@@ -18,10 +18,11 @@ class CreatePostsTable extends Migration
             $table->string('title', 250);
             $table->string('slug',250);
             $table->text('text');
-            $table->text('meta_title');
-            $table->text('meta_description');
-            $table->unsignedBigInteger('author_id');
-            $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->boolean('is_main')->default(false);
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('post_categories')->onDelete('set null');
             $table->timestamps();
         });
     }

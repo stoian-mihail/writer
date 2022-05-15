@@ -20,8 +20,9 @@ class CreateFragmentsTable extends Migration
             $table->text('text');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
-            $table->unsignedBigInteger('type_id');
-            $table->foreign('type_id')->references('id')->on('fragment_types')->onDelete('cascade');
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->boolean('is_main')->default(false);
+            $table->foreign('category_id')->references('id')->on('fragment_categories')->onDelete('set null');
             $table->timestamps();
         });
     }

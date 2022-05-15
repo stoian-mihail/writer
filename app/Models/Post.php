@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    public function photo(){
+        return $this->hasOne(PostPhoto::class, 'belongs_id');
+    }
 }

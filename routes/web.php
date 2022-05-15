@@ -21,11 +21,14 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::middleware(['auth'])->group(function () {
 
 // posts routes admin
-Route::get('/admin/posts', [App\Http\Controllers\PostController::class, 'indexAdmin'])->name('admin.posts');
-Route::get('/create-post', [App\Http\Controllers\PostController::class, 'create'])->name('post.create');
-Route::post('/store-post', [App\Http\Controllers\PostController::class, 'store'])->name('post.store');
-Route::post('/edit-post/{post}', [App\Http\Controllers\PostController::class, 'edit'])->name('post.edit');
-Route::post('/delete-post/{post}', [App\Http\Controllers\PostController::class, 'destroy'])->name('post.delete');
+Route::get('/admin', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('/admin/posts', [App\Http\Controllers\PostController::class, 'indexAdmin'])->name('admin.posts.index');
+Route::get('/create-post', [App\Http\Controllers\PostController::class, 'create'])->name('admin.posts.create');
+Route::post('/store-post', [App\Http\Controllers\PostController::class, 'store'])->name('admin.posts.store');
+Route::get('/edit-post/{post}', [App\Http\Controllers\PostController::class, 'edit'])->name('admin.posts.edit');
+Route::post('/delete-post/{post}', [App\Http\Controllers\PostController::class, 'destroy'])->name('admin.posts.delete');
+Route::post('/update-post/{post}', [App\Http\Controllers\PostController::class, 'update'])->name('admin.posts.update');
 
 // post photos admin
 Route::post('/delete-post-photo/{photo}', [App\Http\Controllers\PostPhotoController::class, 'destroy'])->name('post.photo.delete');
@@ -33,24 +36,33 @@ Route::post('/delete-post-photo/{photo}', [App\Http\Controllers\PostPhotoControl
 
 // news routes admin
 
-Route::get('/admin/news', [App\Http\Controllers\NewsController::class, 'indexAdmin'])->name('admin.news');
-Route::get('/create-news', [App\Http\Controllers\NewsController::class, 'create'])->name('news.create');
-Route::post('/store-news', [App\Http\Controllers\NewsController::class, 'store'])->name('news.store');
-Route::post('/edit-news/{news}', [App\Http\Controllers\NewsController::class, 'edit'])->name('news.edit');
-Route::post('/delete-news/{news}', [App\Http\Controllers\NewsController::class, 'destroy'])->name('news.delete');
+Route::get('/admin/news', [App\Http\Controllers\NewsController::class, 'indexAdmin'])->name('admin.news.index');
+Route::get('/create-news', [App\Http\Controllers\NewsController::class, 'create'])->name('admin.news.create');
+Route::post('/store-news', [App\Http\Controllers\NewsController::class, 'store'])->name('admin.news.store');
+Route::get('/edit-news/{news}', [App\Http\Controllers\NewsController::class, 'edit'])->name('admin.news.edit');
+Route::post('/delete-news/{news}', [App\Http\Controllers\NewsController::class, 'destroy'])->name('admin.news.delete');
 
 // books routes admin
 
-Route::get('/admin/products', [App\Http\Controllers\ProductController::class, 'indexAdmin'])->name('admin.products');
-Route::get('/create-product', [App\Http\Controllers\ProductController::class, 'create'])->name('product.create');
-Route::post('/store-product', [App\Http\Controllers\ProductController::class, 'store'])->name('product.store');
-Route::post('/edit-product/{product}', [App\Http\Controllers\ProductController::class, 'edit'])->name('product.edit');
-Route::post('/delete-product/{product}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('product.delete');
+Route::get('/admin/products', [App\Http\Controllers\ProductController::class, 'indexAdmin'])->name('admin.products.index');
+Route::get('/create-product', [App\Http\Controllers\ProductController::class, 'create'])->name('admin.products.create');
+Route::post('/store-product', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
+Route::post('/edit-product/{product}', [App\Http\Controllers\ProductController::class, 'edit'])->name('admin.products.edit');
+Route::post('/delete-product/{product}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('admin.products.delete');
 
-Route::get('/admin/fragments', [App\Http\Controllers\FragmentController::class, 'indexAdmin'])->name('admin.fragments');
-Route::get('/create-fragment', [App\Http\Controllers\FragmentController::class, 'create'])->name('fragment.create');
-Route::post('/store-fragment', [App\Http\Controllers\FragmentController::class, 'store'])->name('fragment.store');
-Route::post('/edit-fragment/{fragment}', [App\Http\Controllers\FragmentController::class, 'edit'])->name('fragment.edit');
-Route::post('/delete-fragment/{fragment}', [App\Http\Controllers\FragmentController::class, 'destroy'])->name('fragment.delete');
+Route::get('/admin/fragments', [App\Http\Controllers\FragmentController::class, 'indexAdmin'])->name('admin.fragments.index');
+Route::get('/create-fragment', [App\Http\Controllers\FragmentController::class, 'create'])->name('admin.fragments.create');
+Route::post('/store-fragment', [App\Http\Controllers\FragmentController::class, 'store'])->name('admin.fragments.store');
+Route::post('/edit-fragment/{fragment}', [App\Http\Controllers\FragmentController::class, 'edit'])->name('admin.fragments.edit');
+Route::post('/delete-fragment/{fragment}', [App\Http\Controllers\FragmentController::class, 'destroy'])->name('admin.fragments.delete');
 
 });
+
+// catalog routes
+
+Route::get('/posts', [App\Http\Controllers\PostController::class, 'index'])->name('posts.index');
+Route::get('/articole', [App\Http\Controllers\PostController::class, 'show'])->name('posts.show');
+
+Route::get('/evenimente/{news}', [App\Http\Controllers\NewsController::class, 'show'])->name('catalog.news.show');
+Route::get('/evenimente', [App\Http\Controllers\NewsController::class, 'index'])->name('catalog.news');
+

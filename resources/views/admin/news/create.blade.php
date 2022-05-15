@@ -12,7 +12,7 @@
 
 <script>
     if( typeof(CKEDITOR) !== "undefined" ) {
-            CKEDITOR.replace('news_body');
+            CKEDITOR.replace('post_body');
         }
 </script>
 @endif

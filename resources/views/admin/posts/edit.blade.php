@@ -4,13 +4,13 @@
     <h5>Adauga articol</h5>
     <div class="row">
         <div class="col-md-12" id="form-div">
-            <form id="add_post_form" method='post' action='{{route("admin.posts.store")}}' enctype="multipart/form-data">
+            <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}' enctype="multipart/form-data">
 
                 @csrf
                 <div class="form-group">
                     <label for="title">Titlu articol</label>
                     <input type="text" class="form-control" required id="title" aria-describedby="title_help"
-                    value="{{old('title')}}" placeholder="Scrie titlu articol"
+                    value="{{$post->title}}" placeholder="Scrie titlu articol"
                     name='title'>
                     @error('title')
                     <p>{{ $message }}</p>
@@ -22,7 +22,7 @@
                         <option disabled selected>Alege categorie</option>
                         @foreach($categories as $category)
                         <option
-                         @if(old('category_id') == $category->id)
+                         @if($post->category_id == $category->id)
                             selected
                          @endif
                             value="{{$category->id}}">{{$category->name}}</option>
@@ -37,47 +37,70 @@
 
                     </label>
                     <textarea style='min-height:600px;' required class="form-control" id="text"
-                        aria-describedby="text_help" name='text'>{{ Request::old('text') }}</textarea>
+                        aria-describedby="text_help" name='text'>{{ $post->text }}</textarea>
 
                 </div>
-
 
                 <div class="form-group">
                     <label for="post_meta_title">SEO: {{"<title>"}} tag (optional)</label>
                     <input class="form-control" id="post_meta_title" aria-describedby="post_meta_title_help"
-                        name='meta_title' type='text' value="{{old('meta_title')}}">
+                        name='meta_title' type='text' value="{{$post->meta_title}}">
                  </div>
 
                 <div class="form-group">
                     <label for="post_meta_description">Meta Desc (optional)</label>
                     <textarea class="form-control" id="post_meta_description" aria-describedby="post_meta_description_help"
-                        name='meta_description'>{{ Request::old('meta_description') }}</textarea>
+                        name='meta_description'>{{ $post->meta_description }}</textarea>
                     <small id="post_meta_description_help" class="form-text text-muted">Meta description (optional)</small>
                 </div>
-                <div class="form-group pl-2">
-                    <div class="row">Pune pe prima pagina</div>
-                    <label for="da">Da:</label>
-                    <input type="radio" id="da" name="is_main" value='1'>
-                    <br>
-                    <label for="nu">NU</label>
-                    <input type="radio" id="nu" name="is_main" value='0'>
-                 </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group pl-2">
+                            <div class="row">Pune pe prima pagina</div>
+                            <label for="da">Da:</label>
+                            <input type="radio" id="da" name="is_main" value='1'
+                            @if($post->is_main)
+                                checked
+                            @endif
+                            >
+                            <br>
+                            <label for="nu">NU</label>
+                            <input type="radio" id="nu" name="is_main" value='0'
+                            @if(!$post->is_main)
+                            checked
+                            @endif
+                            >
+                         </div>
 
-                 <div class="form-group">
-                    <strong>Imagin thumbnail</strong>
+
+                    </div>
+                    <div class="col-6">
+                        <div class="row justify-content-center">
+                            <h5>Thumbnail curent:</h5>
+                        </div>
+                        <div class="row justify-content-center">
+                        <div class="col-6">
+                            <img src="{{$post->photo->thumbnail->file_url}}" alt="event image" class="img-fluid">
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <strong>Schimba thumbnail</strong>
 
                     <div class="custom-file">
                         {{-- <input type="hidden" name="albumImage" value=""> --}}
 
                         <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
-                            onchange="previewFiles(this.files)" required
+                            onchange="previewFiles(this.files)"
                             lang="eng" name="albumImage[]">
-                        <label class="custom-file-label" for="albumImage[]">Alege fotografia</label>
+                        <label class="custom-file-label" for="albumImage[]">Alege fotografiile</label>
                     </div>
                 </div>
 
+
                 <div class="row justify-content-end my-5">
-                    <input type='submit' name="submit_btn" class='btn btn-primary' value='Adauga postare'>
+                    <input type='submit' class='btn btn-primary' value="Salveaza modificarile">
                 </div>
                 <div class="row justify-content-center" id="preview"></div>
 
@@ -85,20 +108,6 @@
         </div>
     </div>
 
-
-    <div class="row mt-3 justify-content-center"><strong>Indicatii: </strong></div>
-    <div class="row justify-content-center">
-        <ol>
-            <li>Dai click pe randul pe care vrei sa apara imaginea( preferabil intre 2 randuri de text)</li>
-            <li>Dai click pe iconita de imagine din bara de unelte</li>
-            <li>Deschizi un nou tab si mergi la vezi imagini si copiezi cu grija linkul de la imaginea dorita</li>
-            <li>Dai paste acelui link unde scrie URL (in tabul image info)</li>
-            <li>La width si height scrii cu mana: 100% </li>
-            <li>Te duci la tabul de Advanced din meniul acesta si dai paste la "Stylesheet classes" la textul: photo_with_modal</li>
-            <li>Apesi OK</li>
-        </ol>
-
-    </div>
 @endsection
 @section('scripts')
 <script>
