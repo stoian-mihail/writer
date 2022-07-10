@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use Illuminate\Support\Str;
 use App\Models\NewsCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -10,10 +11,9 @@ use App\Http\Traits\seoUrlTrait;
 use App\Http\Traits\storeImagesTrait;
 use App\Http\Traits\ConvertImageTrait;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Traits\createThumbnailTrait;
-use BinshopsBlog\Models\BinshopsLanguage;
 use Illuminate\Support\Facades\Validator;
-use BinshopsBlog\Models\BinshopsCategoryTranslation;
 
 class NewsController extends Controller
 {
@@ -28,12 +28,13 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::all();
-        return view('catalog.news.index', compact('news'));
+        $posts = News::all();
+        return view('catalog.news.index', compact('posts'));
     }
     public function indexAdmin()
     {
-        return view('admin.news.index');
+        $posts = News::all();
+        return view('admin.news.index', compact('posts'));
     }
 
     /**
@@ -45,9 +46,7 @@ class NewsController extends Controller
     {
 
         $categories = NewsCategory::all();
-        return view('admin.news.create', ['categories'=>$categories
-
-        ]);
+        return view('admin.news.create', ['categories'=>$categories]);
     }
 
     /**
@@ -58,30 +57,36 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
+
         $input_data = $request->all();
         $validator = Validator::make($request->all(), [
             'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,200}$/', 'max:200', 'required', Rule::unique('news')],
-            'news_body' => ['string', 'min:2', 'required'],
+            'text' => ['string', 'min:2', 'required'],
             'meta_title' => ['string','max:500', 'nullable'],
             'meta_description' => ['string','max:5000', 'nullable'],
-            'albumImage' => ['array', 'required', 'max:12'],
-            'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
+            'albumImage' => ['array',  'max:12'],
+            'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000'],
         ]);
         if($validator->passes()){
+            $uuid =  Str::uuid()->toString().now()->format('Y-m-d-H-m-s');
+
             $seo_title = $this->seoUrl($input_data['title']);
             $news = News::make([
                 'title'=>$input_data['title'],
-                'text'=>$input_data['news_body'],
+                'text'=>$input_data['text'],
                 'slug'=>$seo_title,
                 'category_id'=>$input_data['category_id'],
                 'meta_title'=>$input_data['meta_title'],
-                'meta_description'=>$input_data['meta_description']
+                'meta_description'=>$input_data['meta_description'],
+                'storage_folder'=>"public/news/$uuid/",
+
+                'uuid'=>$uuid
             ]);
             $news->save();
             // now we store the images and also create the thumbnail
-            $this->storeImages($input_data, "NewsPhoto", "news",$seo_title, $news);
+            $this->storeImages($input_data, "NewsPhoto", "news",$uuid, $news);
             Session::flash('message', "Evenimentul a fost adaugat cu success!");
-            return redirect()->route('admin.news');
+            return redirect()->route('admin.news.index');
         }
         else{
             return redirect()->back()->withInput($input_data)->withErrors($validator);
@@ -110,7 +115,9 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        return view('admin.news.edit',['news'=>$news]);
+        $post = $news;
+        $categories = NewsCategory::all();
+        return view('admin.news.edit', compact('categories', 'post'));
 
     }
 
@@ -123,7 +130,38 @@ class NewsController extends Controller
      */
     public function update(Request $request, News $news)
     {
-        //
+        $post = $news;
+        $input_data = $request->all();
+        $old_seo_title =''.$post->slug;
+        $validator = Validator::make($request->all(), [
+            'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,1000}$/', 'max:1000', 'required', Rule::unique('fragments')->ignore($post->title, 'title')],
+            'text' => ['string', 'min:2', 'required'],
+            'meta_title' => ['string','max:500', 'nullable'],
+            'meta_description' => ['string','max:5000', 'nullable'],
+            'albumImage' => ['array', 'max:12'],
+            'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
+        ]);
+        if($validator->passes()){
+            if($input_data['is_main'] == true){
+                $this->makeMain($post->id);
+            }
+            $seo_title = $this->seoUrl($input_data['title']);
+            $post->update($request->input());
+            $post->slug = $seo_title;
+            if(!empty($input_data['albumImage'])){
+                if($post->photo){
+                    $post->photo->delete();
+                }
+                Storage::delete("public/news/$post->uuid/");
+                $this->storeImages($input_data, "NewsPhoto", "news",$post->uuid, $post);
+            }
+            $post->save();
+            Session::flash('message', "Modificarile au fost salvate cu success!");
+            return redirect()->route('admin.news.index');
+        }
+        else{
+            return redirect()->back()->withInput($input_data)->withErrors($validator);
+        }
     }
 
     /**
@@ -132,8 +170,22 @@ class NewsController extends Controller
      * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy($id)
     {
-        //
+        $post = News::find($id);
+        $seo_title =''.$post->slug;
+        // dd($seo_title);
+        Storage::deleteDirectory("public/news/$seo_title/");
+        $post->delete();
+        return redirect()->back();
+    }
+
+    protected function makeMain($id){
+        $post = News::find($id);
+        Post::where('is_main', true)->update(['is_main'=>false]);
+        News::where('is_main', true)->update(['is_main'=>false]);
+        Fragment::where('is_main', true)->update(['is_main'=>false]);
+        $post->is_main = true;
+        $post->save();
     }
 }

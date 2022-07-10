@@ -15,8 +15,8 @@ class CreateNewsTable extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 250);
-            $table->string('slug',250);
+            $table->string('title');
+            $table->string('slug');
             $table->text('text');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
@@ -24,6 +24,10 @@ class CreateNewsTable extends Migration
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('news_categories')->onDelete('cascade');
             $table->boolean('is_main')->default(false);
+            $table->string('uuid');
+            $table->string('storage_folder');
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }

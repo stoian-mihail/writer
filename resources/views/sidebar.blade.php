@@ -1,7 +1,7 @@
 
     <aside>
         <div class="row justify-content-center text-center">
-            <img src="{{asset('/storage/images/mihai_soare.png')}}" class="img-fluid author_image_side" alt="">
+            <img src="{{asset('/images/mihail_soare.png')}}" class="img-fluid author_image_side" alt="">
         </div>
         <div class="row justify-content-center mt-3">
             <div class="col-auto text-start">

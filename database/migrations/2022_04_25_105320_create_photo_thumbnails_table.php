@@ -15,8 +15,9 @@ class CreatePhotoThumbnailsTable extends Migration
     {
         Schema::create('photo_thumbnails', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name', 200);
-            $table->string('file_url', 300);
+            $table->string('file_name');
+            $table->string('file_url');
+            $table->softDeletes();
 
         });
     }

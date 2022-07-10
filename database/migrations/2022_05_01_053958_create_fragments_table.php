@@ -15,14 +15,16 @@ class CreateFragmentsTable extends Migration
     {
         Schema::create('fragments', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 250);
-            $table->string('slug',250);
+            $table->string('title');
+            $table->string('slug');
             $table->text('text');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('volume_id')->nullable();
             $table->boolean('is_main')->default(false);
-            $table->foreign('category_id')->references('id')->on('fragment_categories')->onDelete('set null');
+            $table->foreign('volume_id')->references('id')->on('products')->onDelete('set null');
+            $table->string('uuid');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

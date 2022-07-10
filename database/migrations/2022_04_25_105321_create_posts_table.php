@@ -15,14 +15,17 @@ class CreatePostsTable extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 250);
-            $table->string('slug',250);
+            $table->string('title');
+            $table->string('slug');
             $table->text('text');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->boolean('is_main')->default(false);
             $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')->references('id')->on('post_categories')->onDelete('set null');
+            $table->string('uuid');
+            $table->string('storage_folder');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

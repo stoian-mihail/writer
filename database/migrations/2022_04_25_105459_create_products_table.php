@@ -15,16 +15,20 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('prod_name', 120);
-            $table->string('seo_title', 120);
-            $table->text('prod_description', 5000)->nullable();
-            $table->text('meta_title', 500)->nullable();
-            $table->text('meta_description', 5000)->nullable();
+            $table->string('prod_name');
+            $table->string('slug');
+            $table->text('prod_description')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
             $table->string('available_at');
             $table->integer('prod_price')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->timestamps();
             $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('set null');
+            $table->string('uuid');
+            $table->softDeletes();
+            $table->string('storage_folder');
+
+            $table->timestamps();
         });
     }
 

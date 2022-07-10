@@ -13,7 +13,9 @@
                 <article>
                     <div class="row mt-2 text-left">
                         <div class="col-2 p-0">
-                            <img src="{{$post->photo->thumbnail->file_url}}" alt="post image" class="img-fluid">
+                           @if ($post->photo )
+                           <img src="{{$post->photo->thumbnail->file_url}}" alt="post image" class="img-fluid">
+                           @endif
                         </div>
                         <div class="col-6">
                             <a href="{{route('posts.show', $post)}}" class="text-primary">

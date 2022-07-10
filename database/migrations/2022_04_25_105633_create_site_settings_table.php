@@ -19,6 +19,8 @@ class CreateSiteSettingsTable extends Migration
             $table->text('terms')->nullable();
             $table->text('confidentiality')->nullable();
             $table->text('contact')->nullable();
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

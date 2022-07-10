@@ -74,10 +74,10 @@
                 <a class="nav-link" href="#">Despre mine</a>
               </li>
               <li class="nav-item mx-2">
-                <a class="nav-link" href="{{route('catalog.news')}}">Evenimente</a>
+                <a class="nav-link" href="{{route('news.index')}}">Evenimente</a>
               </li>
               <li class="nav-item mx-2">
-                <a class="nav-link" href="#">Blog</a>
+                <a class="nav-link" href="{{route('posts.index')}}">Blog</a>
               </li>
               <li class="nav-item mx-2 dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown09" data-bs-toggle="dropdown" aria-expanded="false">Fragmente</a>

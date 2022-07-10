@@ -16,6 +16,10 @@ class SiteSettingController extends Controller
     {
         //
     }
+    public function showChangePassword(){
+
+        return view('admin.settings.changepassword');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -55,31 +59,48 @@ class SiteSettingController extends Controller
      * @param  \App\Models\SiteSetting  $siteSetting
      * @return \Illuminate\Http\Response
      */
-    public function edit(SiteSetting $siteSetting)
+    public function editAbout(Request $request)
     {
-        //
+        $post = SiteSetting::first()->about;
+        return view('admin.about.about_me', compact('post'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SiteSetting  $siteSetting
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SiteSetting $siteSetting)
+    public function editConfidentiality(Request $request)
     {
-        //
+        $post = SiteSetting::first()->confidentiality;
+        return view('admin.about.confidentiality', compact('post'));
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\SiteSetting  $siteSetting
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(SiteSetting $siteSetting)
+    public function editTerms(Request $request)
     {
-        //
+        $post = SiteSetting::first()->terms;
+        return view('admin.about.terms', compact('post'));
     }
+
+    public function saveAbout(Request $request)
+    {
+        $post = SiteSetting::first();
+        $post->about = $request->input('text');
+        $post->save();
+        return redirect()->route('admin.about');
+    }
+    public function saveConfidentiality(Request $request)
+    {
+        $post = SiteSetting::first();
+        $post->confidentiality = $request->input('text');
+        $post->save();
+        return redirect()->route('admin.confidentiality');
+
+    }
+    public function saveTerms(Request $request)
+    {
+        $post = SiteSetting::first();
+        $post->terms = $request->input('text');
+        $post->save();
+        return redirect()->route('admin.terms');
+
+    }
+
+
 }

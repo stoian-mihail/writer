@@ -1,112 +1,139 @@
 @extends("layouts.admin")
 @section("content")
 
-    <h5>Adauga articol</h5>
-    <div class="row">
-        <div class="col-md-12" id="form-div">
-            <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}' enctype="multipart/form-data">
+<h5>Adauga articol</h5>
+<div class="row">
+    <div class="col-md-12" id="form-div">
+        <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}'
+            enctype="multipart/form-data">
 
-                @csrf
-                <div class="form-group">
-                    <label for="title">Titlu articol</label>
-                    <input type="text" class="form-control" required id="title" aria-describedby="title_help"
-                    value="{{$post->title}}" placeholder="Scrie titlu articol"
-                    name='title'>
-                    @error('title')
-                    <p>{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="form-group">
-                    <label for="date" class="me-2">Categorie articol:</label>
-                    <select name="category_id" class="form-control" required id="post_categories">
-                        <option disabled selected>Alege categorie</option>
-                        @foreach($categories as $category)
-                        <option
-                         @if($post->category_id == $category->id)
-                            selected
-                         @endif
-                            value="{{$category->id}}">{{$category->name}}</option>
-                        @endforeach
-                    </select>
+            @csrf
+            <div class="form-group">
+                <label for="title">Titlu articol</label>
+                <input type="text" class="form-control" required id="title" aria-describedby="title_help"
+                    value="{{$post->title}}" placeholder="Scrie titlu articol" name='title'>
+                @error('title')
+                <p>{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="date" class="me-2">Categorie articol:</label>
+                <select name="category_id" class="form-control" required id="post_categories">
+                    <option disabled selected>Alege categorie</option>
+                    @foreach($categories as $category)
+                    <option @if($post->category_id == $category->id)
+                        selected
+                        @endif
+                        value="{{$category->id}}">{{$category->name}}</option>
+                    @endforeach
+                </select>
 
-                </div>
-                <div class="form-group">
-                    <label for="text">Text articol
+            </div>
+            <div class="form-group">
+                <label for="text">Text articol
 
-                        (HTML)
+                    (HTML)
 
-                    </label>
-                    <textarea style='min-height:600px;' required class="form-control" id="text"
-                        aria-describedby="text_help" name='text'>{{ $post->text }}</textarea>
+                </label>
+                <textarea style='min-height:600px;' required class="form-control" id="text" aria-describedby="text_help"
+                    name='text'>{{ $post->text }}</textarea>
 
-                </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="post_meta_title">SEO: {{"<title>"}} tag (optional)</label>
-                    <input class="form-control" id="post_meta_title" aria-describedby="post_meta_title_help"
-                        name='meta_title' type='text' value="{{$post->meta_title}}">
-                 </div>
+            <div class="form-group">
+                <label for="post_meta_title">SEO: {{"<title>"}} tag (optional)</label>
+                <input class="form-control" id="post_meta_title" aria-describedby="post_meta_title_help"
+                    name='meta_title' type='text' value="{{$post->meta_title}}">
+            </div>
 
-                <div class="form-group">
-                    <label for="post_meta_description">Meta Desc (optional)</label>
-                    <textarea class="form-control" id="post_meta_description" aria-describedby="post_meta_description_help"
-                        name='meta_description'>{{ $post->meta_description }}</textarea>
-                    <small id="post_meta_description_help" class="form-text text-muted">Meta description (optional)</small>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group pl-2">
-                            <div class="row">Pune pe prima pagina</div>
-                            <label for="da">Da:</label>
-                            <input type="radio" id="da" name="is_main" value='1'
-                            @if($post->is_main)
-                                checked
-                            @endif
-                            >
-                            <br>
-                            <label for="nu">NU</label>
-                            <input type="radio" id="nu" name="is_main" value='0'
-                            @if(!$post->is_main)
-                            checked
-                            @endif
-                            >
-                         </div>
-
-
+            <div class="form-group">
+                <label for="post_meta_description">Meta Desc (optional)</label>
+                <textarea class="form-control" id="post_meta_description" aria-describedby="post_meta_description_help"
+                    name='meta_description'>{{ $post->meta_description }}</textarea>
+                <small id="post_meta_description_help" class="form-text text-muted">Meta description (optional)</small>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group pl-2">
+                        <div class="row">Pune pe prima pagina</div>
+                        <label for="da">Da:</label>
+                        <input type="radio" id="da" name="is_main" value='1' @if($post->is_main)
+                        checked
+                        @endif
+                        >
+                        <br>
+                        <label for="nu">NU</label>
+                        <input type="radio" id="nu" name="is_main" value='0' @if(!$post->is_main)
+                        checked
+                        @endif
+                        >
                     </div>
-                    <div class="col-6">
-                        <div class="row justify-content-center">
-                            <h5>Thumbnail curent:</h5>
-                        </div>
-                        <div class="row justify-content-center">
+
+
+                </div>
+                <div class="col-6">
+                    <div class="row justify-content-center">
+                        <h5>Poza curenta:</h5>
+                    </div>
+                    <div class="row justify-content-center">
                         <div class="col-6">
                             <img src="{{$post->photo->thumbnail->file_url}}" alt="event image" class="img-fluid">
-                        </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary w-100"
+                                        onclick="previewFile('{{$post->photo->file_url}}')">Editeaza</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
-                <div class="form-group">
-                    <strong>Schimba thumbnail</strong>
+            </div>
+            <div class="form-group">
+                <strong>Schimba thumbnail</strong>
 
-                    <div class="custom-file">
-                        {{-- <input type="hidden" name="albumImage" value=""> --}}
+                <div class="custom-file">
+                    {{-- <input type="hidden" name="albumImage" value=""> --}}
 
-                        <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
-                            onchange="previewFiles(this.files)"
-                            lang="eng" name="albumImage[]">
-                        <label class="custom-file-label" for="albumImage[]">Alege fotografiile</label>
+                    <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
+                        onchange="previewFiles(this.files)" lang="eng" name="albumImage[]">
+                    <label class="custom-file-label" for="albumImage[]">Alege fotografiile</label>
+                </div>
+            </div>
+
+
+            <div class="row justify-content-end my-5">
+                <input type='submit' class='btn btn-primary' value="Salveaza modificarile">
+            </div>
+            <div class="row justify-content-center" id="preview"></div>
+
+        </form>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <!-- This is the modal -->
+        <div class="modal" tabindex="-1" role="dialog" id="uploadimageModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-0 pt-2">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div id="image-crop-div"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="mr-5">Regleaza cu ajutorul scrollului sau al barei</span>
+                        <button type="button" onclick="removeFile()" class="btn btn-secondary"
+                            data-dismiss="modal">Anuleaza</button>
+                        <button id="cropresult" type="button" class="btn btn-success">Salveaza</button>
                     </div>
                 </div>
-
-
-                <div class="row justify-content-end my-5">
-                    <input type='submit' class='btn btn-primary' value="Salveaza modificarile">
-                </div>
-                <div class="row justify-content-center" id="preview"></div>
-
-            </form>
+            </div>
         </div>
     </div>
+</div>
 
 @endsection
 @section('scripts')
@@ -138,7 +165,6 @@
 </script>
 
 <script>
-
     var albumFiles = [];
     var fileMap = [];
     var newFiles = [];
@@ -342,5 +368,138 @@
             flash.innerHTML = '';
         }
     }
+
+// aici
+
+    // cropped
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+var width = window.innerWidth * 0.25;
+var height = window.innerWidth * 0.25;
+var bwidth = window.innerWidth * 0.3;
+var bheight = window.innerWidth * 0.4;
+var uploadCrop;
+
+$(document).ready(function () {
+
+    uploadCrop = $('#image-crop-div').croppie({
+    enableExif: true,
+    viewport: { width: width, height: height },
+    boundary: { width: bwidth, height: bheight },
+    showZoomer: true,
+    enableResize: true,
+    enableOrientation: true,
+    mouseWheelZoom: 'ctrl'
+    });
+});
+
+
+// `await` can only be used in an async body, but showing it here for simplicity.
+
+
+function uploadCropped(formData) {
+    $('#uploadimageModal').modal('hide');
+
+    $.ajax({
+        method: 'post',
+        processData: false,
+        contentType: false,
+        async: true,
+        cache: false,
+        data: formData,
+        enctype: 'multipart/form-data',
+        url: '{{route("upload.cropped")}}',
+        encode: true
+    })
+        // using the done promise callback
+        .done(function (data, textStatus, jqXHR) {
+            if (data.success) {
+                removeFile();
+
+            } else {
+                removeFile();
+                $.each(data.error, function (key, value) {
+
+
+                    let mainDiv = $('.profile-photo');
+                    let allErrors = '';
+
+                    mainDiv.append('<span class="invalid-feedback" role="alert"></span>');
+                    $.each(value, function (i, val) {
+                        allErrors += val + ' ';
+                    });
+                    mainDiv.children().last().append(`<strong>${allErrors}</strong>`);
+                });
+
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            createFlash('alert-danger', "S-a produs o eroare neasteptata! Da refresh si incearca din nou!");
+
+        });
+};
+
+async function getFileFromUrl(url, name, defaultType = 'image/jpeg'){
+  const response = await fetch(url);
+  const data = await response.blob();
+  return new File([data], name, {
+    type: data.type || defaultType,
+  });
+}
+
+
+async function previewFile(files) {
+    let file = await getFileFromUrl(files, 'imagine.jpg');
+    var thumbSrc;
+    let photo_id = @json($post->photo->id);
+    let photo_model = 'App\\Models\\PostPhoto';
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        thumbSrc = reader.result;
+        uploadCrop.croppie('bind', {
+            url: thumbSrc,
+        });
+
+        $('#uploadimageModal').modal('show');
+        $('#uploadimageModal').modal('handleUpdate');
+        $('#cropresult').on('click', function () {
+            uploadCrop.croppie('result', 'blob', 'original', 'png', 1, true).then(function (blob) {
+                let formData = new FormData();
+                thumbSrc = URL.createObjectURL(blob, { oneTimeOnly: true });
+                $('#image-crop-div').attr("src", thumbSrc);
+                formData.append('image', blob, 'imagine_cropped');
+                formData.append('photo_id',photo_id )
+                formData.append('photo_model',photo_model )
+
+                console.log(blob);
+
+                uploadCropped(formData);
+            });
+        });
+
+    };
+}
+
+
+function removeFile() {
+    $('.custom-file-label').html("Alege foto");
+    $(document).ready(function () {
+
+        $('.custom-file-input').val("");
+    });
+}
+
+
+
+
+
+
+
+
 </script>
 @endsection

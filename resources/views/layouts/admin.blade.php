@@ -20,9 +20,13 @@
     <link href="{{ asset('/css/binshopsblog_admin_css.css') }}" rel="stylesheet">
 
     <link href="{{ asset('/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/croppie.css') }}" rel="stylesheet">
+
     <script src="{{ asset('/js/jquery-3.4.1.min.js') }}"> </script>
     <script src="{{asset('/js/popper.min.js')}}"></script>
     <script src="{{asset('/js/bootstrap.min.js')}}"></script>
+<script src="{{ asset('js/croppie.js') }}" type="text/javascript"></script>
+
     <link href="/css/select2.min.css" rel="stylesheet" />
     <script src="/js/select2.min.js"></script>
 
@@ -49,8 +53,11 @@
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-
                     <li class="nav-item ">
+                        <a class="nav-link mr-5" href="{{ route('home') }}">Mergi la site </a>
+
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
