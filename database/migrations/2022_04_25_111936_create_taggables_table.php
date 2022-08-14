@@ -17,9 +17,8 @@ class CreateTaggablesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('tag_id');
             $table->unsignedBigInteger('taggable_id');
-            $table->unsignedBigInteger('taggable_type')->nullable();
+            $table->string('taggable_type')->nullable();
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

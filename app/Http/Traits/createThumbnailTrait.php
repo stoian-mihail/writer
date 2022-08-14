@@ -12,7 +12,7 @@ trait createThumbnailTrait
 {
     use ConvertImageTrait;
 
-    public function createThumbnail($file, $name, $base_directory, $seo_title = null)
+    public function createThumbnail($file, $name, $base_directory)
     {
         $file_name = $name . '-thumbnail' . ".jpg";
 
@@ -33,8 +33,8 @@ trait createThumbnailTrait
         } else {
             $fileResized = $img->encode('jpg');
         }
-                Storage::put("public/$base_directory/$seo_title/thumbnails/{$file_name}", $fileResized->__toString());
-                $fileUrl = "/storage/$base_directory/$seo_title/thumbnails/{$file_name}";
+        Storage::put("public/$base_directory/thumbnails/{$file_name}", $fileResized->__toString());
+        $fileUrl = "/storage/$base_directory/thumbnails/{$file_name}";
 
         $photoThumbnail = PhotoThumbnail::create([
             'file_name' => $file_name,

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\News;
 use App\Models\Post;
+use App\Models\Product;
 use App\Models\Fragment;
+use App\Models\PostPhoto;
 use Illuminate\Support\Str;
 use App\Models\PostCategory;
 use Illuminate\Http\Request;
@@ -24,16 +27,30 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::all();
+        if (request('category')) {
+            $posts = PostCategory::where('slug', request('category'))->first()->posts;
+        } else {
+            $posts = Post::all();
+        }
+
         return view('catalog.posts.index', compact('posts'));
     }
 
-    public function indexAdmin()
+    public function indexAdmin(Request $request)
     {
-        $posts = Post::all();
-        return view('admin.posts.index', compact('posts'));
+
+        $input_data = $request->all();
+        $currentURL = url()->full();
+
+
+        $posts = Post::latest()->paginate(24);
+        $route  =  route('admin.posts.index');
+        $categories = PostCategory::all();
+        $posts->withPath($currentURL);
+        session(['filter_criteria' => $input_data]);
+        return view('admin.posts.index', compact('posts', 'route', 'categories'))->with('filter_criteria', session('filter_criteria'));
     }
     /**
      * Show the form for creating a new resource.
@@ -43,7 +60,8 @@ class PostController extends Controller
     public function create()
     {
         $categories = PostCategory::all();
-        return view('admin.posts.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -56,41 +74,40 @@ class PostController extends Controller
     {
 
         $input_data = $request->all();
-        // dd($input_data);
 
         $validator = Validator::make($request->all(), [
             'title' => ['string', 'min:2', 'required', Rule::unique('posts')],
             'text' => ['string', 'min:2', 'required'],
-            'meta_title' => ['string','max:500', 'nullable'],
-            'meta_description' => ['string','max:5000', 'nullable'],
+            'meta_title' => ['string', 'max:500', 'nullable'],
+            'tags.*' => ['regex:/^[a-zA-Z0-9\s-]{2,15}$/', 'required'],
+            'tags' => ['array'],
+            'meta_description' => ['string', 'max:5000', 'nullable'],
             'albumImage' => ['array', 'max:12'],
             'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000'],
         ]);
-        if($validator->passes()){
-            $uuid =  Str::uuid()->toString().now()->format('Y-m-d-H-m-s');
+        if ($validator->passes()) {
+            $uuid =  Str::uuid()->toString() . now()->format('Y-m-d-H-m-s');
 
             $seo_title = $this->seoUrl($input_data['title']);
             $post = Post::make([
-                'title'=>$input_data['title'],
-                'text'=>$input_data['text'],
-                'slug'=>$seo_title,
-                'category_id'=>$input_data['category_id'],
-                'meta_title'=>$input_data['meta_title'],
-                'meta_description'=>$input_data['meta_description'],
-                'storage_folder'=>"public/posts/$uuid/",
-                'uuid'=>$uuid
+                'title' => $input_data['title'],
+                'text' => $input_data['text'],
+                'slug' => $seo_title,
+                'category_id' => $input_data['category_id'],
+                'meta_title' => $input_data['meta_title'],
+                'meta_description' => $input_data['meta_description'],
+                'storage_folder' => "public/posts/$uuid/",
+                'uuid' => $uuid
             ]);
             $post->save();
+            $post->tag($input_data['tags']);
             // now we store the images and also create the thumbnail
-            $this->storeImages($input_data, "PostPhoto", "posts",$uuid, $post);
+            $this->storeImages($input_data, "PostPhoto", "posts/$post->uuid", $seo_title, $post);
             Session::flash('message', "Articolul a fost adaugat cu success!");
             return redirect()->route('admin.posts.index');
-        }
-        else{
+        } else {
             return redirect()->back()->withInput($input_data)->withErrors($validator);
         }
-
-
     }
 
     /**
@@ -101,7 +118,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        $categories = PostCategory::all();
+        $books = Product::all();
+        return view('catalog.posts.show', compact('post', 'categories', 'books'));
     }
 
     /**
@@ -113,7 +132,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = PostCategory::all();
-        return view('admin.posts.edit', compact('post','categories'));
+        $tags = $post->tags;
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -125,38 +145,44 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $input_data = $request->all();
-        $old_seo_title =''.$post->slug;
+        // dd($request->all());
+        $input_data = $request->except(['tags', 'albumImage']);
+
         $validator = Validator::make($request->all(), [
-            'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,1000}$/', 'max:1000', 'required', Rule::unique('posts')->ignore($post->title, 'title')],
+            'title' => ['string', 'min:2', 'max:1000', 'required', Rule::unique('posts')->ignore($post->title, 'title')],
             'text' => ['string', 'min:2', 'required'],
-            'meta_title' => ['string','max:500', 'nullable'],
-            'meta_description' => ['string','max:5000', 'nullable'],
-            'albumImage' => ['array', 'max:12'],
+            'meta_title' => ['string', 'max:500', 'nullable'],
+            'meta_description' => ['string', 'max:5000', 'nullable'],
+            'tags.*' => ['regex:/^[a-zA-Z0-9\s-]{2,15}$/'],
+            'tags' => ['array'],
+            'albumImage' => ['array', 'nullable', 'max:12'],
             'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
         ]);
-        if($validator->passes()){
-            if($input_data['is_main'] == true){
+        if ($validator->passes()) {
+            if ($input_data['is_main'] == true) {
                 $this->makeMain($post->id);
             }
             $seo_title = $this->seoUrl($input_data['title']);
-            $post->update($request->input());
+            $post->update($input_data);
             $post->slug = $seo_title;
-            if(!empty($input_data['albumImage'])){
-                if($post->photo){
+            $input_data = $request->all();
+            if ($input_data['albumImage']) {
+                if ($post->photo) {
                     $post->photo()->delete();
                 }
-                Storage::delete("public/posts/$post->uuid/");
-                $this->storeImages($input_data, "PostPhoto", "posts",$post->uuid, $post);
+
+                Storage::deleteDirectory("public/posts/$post->uuid/");
+                $this->storeImages($input_data, "PostPhoto", "posts/$post->uuid", $seo_title, $post);
             }
+
             $post->save();
+
+            $post->tag($request->input('tags'));
             Session::flash('message', "Modificarile au fost salvate cu success!");
             return redirect()->route('admin.posts.index');
-        }
-        else{
+        } else {
             return redirect()->back()->withInput($input_data)->withErrors($validator);
         }
-
     }
 
     /**
@@ -171,15 +197,26 @@ class PostController extends Controller
         Storage::deleteDirectory("public/posts/$post->uuid/");
         $post->photo()->delete();
         $post->delete();
-        return redirect()->back();
 
+        return redirect()->back();
     }
 
-    protected function makeMain($id){
+    public function destroyPhoto(Request $request)
+    {
+        $post_photo = PostPhoto::find($request->input('photo_id'));
+        $post = $post_photo->post;
+        Storage::deleteDirectory("public/posts/$post->uuid/");
+        $post->photo()->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    private function makeMain($id)
+    {
         $post = Post::find($id);
-        Post::where('is_main', true)->update(['is_main'=>false]);
-        News::where('is_main', true)->update(['is_main'=>false]);
-        Fragment::where('is_main', true)->update(['is_main'=>false]);
+        Post::where('is_main', true)->update(['is_main' => false]);
+        News::where('is_main', true)->update(['is_main' => false]);
+        Fragment::where('is_main', true)->update(['is_main' => false]);
         $post->is_main = true;
         $post->save();
     }

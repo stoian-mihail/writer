@@ -40,6 +40,19 @@
                     name='text'>{{ Request::old('text') }}</textarea>
 
             </div>
+            <div class="form-group">
+                <label for="tags" class="me-2">Cuvinte cheie:</label>
+                <select name="tags[]" class="form-control" id="tags" multiple="multiple" required>
+
+                    @foreach($tags as $tag)
+                    <option @if(old('tags')==$tag->name)
+                        selected
+                        @endif
+                        value="{{$tag->name}}">{{$tag->name}}</option>
+                    @endforeach
+                </select>
+
+            </div>
 
 
             <div class="form-group">
@@ -75,7 +88,7 @@
                 </div>
             </div>
 
-            <div class="row justify-content-end my-5">
+            <div class="row justify-content-end mt-5">
                 <input type='submit' name="submit_btn" class='btn btn-primary' value='Adauga postare'>
             </div>
             <div class="row justify-content-center" id="preview"></div>
@@ -119,6 +132,22 @@
     //         return markup;
     //     }
     });
+
+    $('#tags').select2({
+     tags: true,
+       placeholder: 'Alege cuvinte cheie'
+        , maximumSelectionLength: 5
+        , tokenSeparators: [',']
+        , "language": {
+            "noResults": function() {
+                return "Scrie tagul si apasa enter!";
+            }
+        }
+        , escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+
 
 </script>
 

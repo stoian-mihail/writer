@@ -2,7 +2,7 @@
 
 namespace App\Http\Traits;
 
-use App\Tags;
+use App\Models\Tag;
 
 trait TagsTrait
 {
@@ -12,10 +12,10 @@ trait TagsTrait
         $taglist = array();
         if (is_array($tags)) {
             foreach ($tags as $tagname) {
-                $tagcheck = Tags::where('tag_name', $tagname)->first();
+                $tagcheck = Tag::where('name', $tagname)->first();
                 if ($tagcheck === null) {
-                    $tag = new Tags;
-                    $tag->tag_name = $tagname;
+                    $tag = new Tag;
+                    $tag->name = $tagname;
                     $tag->save();
                     $taglist[] = $tag->id;
                 } else {

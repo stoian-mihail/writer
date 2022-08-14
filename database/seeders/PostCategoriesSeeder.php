@@ -14,7 +14,7 @@ class PostCategoriesSeeder extends Seeder
      */
     public function run()
     {
-        $categories = ["categoria 1", "categoria 2", "categoria 3"];
+        $categories = ["Versuri", "Proza", "Scrieri politice"];
         foreach($categories as $category){
             PostCategory::create(["name"=>$category]);
         }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\News;
+use App\Models\Post;
 use App\Models\Product;
 use App\Models\Fragment;
 use Illuminate\Support\Str;
@@ -43,8 +45,9 @@ class FragmentController extends Controller
         $volumes = Product::select('id', 'prod_name')->get();
 
         return view('admin.fragments.create', [
-        'volumes'=>$volumes]);
-        }
+            'volumes' => $volumes
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -57,33 +60,32 @@ class FragmentController extends Controller
 
         $input_data = $request->all();
         $validator = Validator::make($request->all(), [
-            'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,200}$/', 'max:200', 'required', Rule::unique('fragments')],
+            'title' => ['string', 'min:2', 'max:1000', 'required', Rule::unique('fragments')],
             'text' => ['string', 'min:2', 'required'],
-            'meta_title' => ['string','max:500', 'nullable'],
-            'meta_description' => ['string','max:5000', 'nullable'],
+            'meta_title' => ['string', 'max:500', 'nullable'],
+            'meta_description' => ['string', 'max:5000', 'nullable'],
             // 'albumImage' => ['array', 'required', 'max:12'],
             // 'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
         ]);
-        if($validator->passes()){
-            $uuid =  Str::uuid()->toString().now()->format('Y-m-d-H-m-s');
+        if ($validator->passes()) {
+            $uuid =  Str::uuid()->toString() . now()->format('Y-m-d-H-m-s');
 
             $seo_title = $this->seoUrl($input_data['title']);
             $news = Fragment::make([
-                'title'=>$input_data['title'],
-                'text'=>$input_data['text'],
-                'slug'=>$seo_title,
-                'meta_title'=>$input_data['meta_title'],
-                'meta_description'=>$input_data['meta_description'],
-                'volume_id'=>$input_data['volume_id'],
-                'uuid'=>$uuid
+                'title' => $input_data['title'],
+                'text' => $input_data['text'],
+                'slug' => $seo_title,
+                'meta_title' => $input_data['meta_title'],
+                'meta_description' => $input_data['meta_description'],
+                'volume_id' => $input_data['volume_id'],
+                'uuid' => $uuid
             ]);
             $news->save();
             // now we store the images and also create the thumbnail
             // $this->storeImages($input_data, "NewsPhoto", "news",$uuid, $news);
             Session::flash('message', "Fragmentul a fost adaugat cu success!");
             return redirect()->route('admin.fragments.index');
-        }
-        else{
+        } else {
             return redirect()->back()->withInput($input_data)->withErrors($validator);
         }
     }
@@ -124,15 +126,15 @@ class FragmentController extends Controller
         $post = $fragment;
         $input_data = $request->all();
         $validator = Validator::make($request->all(), [
-            'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,200}$/', 'max:1000', 'required', Rule::unique('fragments')->ignore($post->title, 'title')],
+            'title' => ['string', 'min:2', 'max:1000', 'required', Rule::unique('fragments')->ignore($post->title, 'title')],
             'text' => ['string', 'min:2', 'required'],
-            'meta_title' => ['string','max:500', 'nullable'],
-            'meta_description' => ['string','max:5000', 'nullable'],
+            'meta_title' => ['string', 'max:500', 'nullable'],
+            'meta_description' => ['string', 'max:5000', 'nullable'],
             // 'albumImage' => ['array', 'max:12'],
             // 'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
         ]);
-        if($validator->passes()){
-            if($input_data['is_main'] == true){
+        if ($validator->passes()) {
+            if ($input_data['is_main'] == true) {
                 $this->makeMain($post->id);
             }
             $seo_title = $this->seoUrl($input_data['title']);
@@ -141,8 +143,7 @@ class FragmentController extends Controller
             $post->save();
             Session::flash('message', "Modificarile au fost salvate cu success!");
             return redirect()->route('admin.fragments.index');
-        }
-        else{
+        } else {
             return redirect()->back()->withInput($input_data)->withErrors($validator);
         }
     }
@@ -159,5 +160,16 @@ class FragmentController extends Controller
         Storage::delete("public/fragments/$post->uuid/");
         $post->delete();
         return redirect()->back();
+    }
+
+    private function makeMain($id)
+    {
+        $post = Fragment::find($id);
+        Post::where('is_main', true)->update(['is_main' => false]);
+        News::where('is_main', true)->update(['is_main' => false]);
+        Fragment::where('is_main', true)->update(['is_main' => false]);
+
+        $post->is_main = true;
+        $post->save();
     }
 }

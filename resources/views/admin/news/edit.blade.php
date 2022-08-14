@@ -71,7 +71,9 @@
 
 
                 </div>
-                <div class="col-6">
+
+                @if ($post->photo)
+                <div class="col-6 thumb_edit_container">
                     <div class="row justify-content-center">
                         <h5>Poza curenta:</h5>
                     </div>
@@ -83,11 +85,16 @@
                                     <button type="button" class="btn btn-primary w-100"
                                         onclick="previewFile('{{$post->photo->file_url}}')">Editeaza</button>
                                 </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-danger w-100"
+                                        onclick="showModal({{$post->photo->id}})">Sterge</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
+                @endif
             </div>
             <div class="form-group">
                 <strong>Schimba thumbnail</strong>
@@ -135,26 +142,60 @@
         </div>
     </div>
 </div>
+
+@include('admin.deletemodal',['object'=>"imaginea"])
 @endsection
 @section('scripts')
 <script>
     $('#post_categories').select2({
-    //     // tags: true
-    //    placeholder: 'Alege categorie'
-    //     , maximumSelectionLength: 5
-    //     , tokenSeparators: [',']
-    //     , "language": {
-    //         "noResults": function() {
-    //             return "Scrie tagul si apasa enter!";
-    //         }
-    //     }
-    //     , escapeMarkup: function(markup) {
-    //         return markup;
-    //     }
+
     });
 
 </script>
 
+<script>
+    function showModal(id) {
+            console.log('a intrat');
+                $('#deletemodal').modal('show');
+                var modalDialog = $(".modal-dialog");
+                modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 3));
+                $('#delete-item-button').attr('data-id',id)
+            }
+
+
+
+        function deleteItem(event){
+            let target_id = event.currentTarget.dataset.id;
+            console.log(event.currentTarget);
+            console.log(target_id);
+
+            let formData = new FormData();
+                formData.append('photo_id',target_id );
+            $.ajax({
+            method: 'post',
+            processData: false,
+            contentType: false,
+            async: true,
+            cache: false,
+            data: formData,
+            enctype: 'multipart/form-data',
+            url: '{{route("admin.news.delete.photo")}}',
+            encode: true
+        })
+        // using the done promise callback
+        .done(function (data, textStatus, jqXHR) {
+            if(data.success){
+                $('#deletemodal').modal('hide');
+                $('.thumb_edit_container').html('');
+                // $('#preview').hmtl('');
+            }
+
+
+        });
+        }
+
+
+</script>
 
 <script src="//cdn.ckeditor.com/4.15.0/full/ckeditor.js"></script>
 
@@ -419,8 +460,7 @@ function uploadCropped(formData) {
         // using the done promise callback
         .done(function (data, textStatus, jqXHR) {
             if (data.success) {
-                removeFile();
-
+                location.reload(true);
             } else {
                 removeFile();
                 $.each(data.error, function (key, value) {
@@ -456,7 +496,7 @@ async function getFileFromUrl(url, name, defaultType = 'image/jpeg'){
 async function previewFile(files) {
     let file = await getFileFromUrl(files, 'imagine.jpg');
     var thumbSrc;
-    let photo_id = @json($post->photo->id);
+    let photo_id = @json($post->photo? $post->photo->id:'');
     let photo_model = 'App\\Models\\NewsPhoto';
     var reader = new FileReader();
     reader.readAsDataURL(file);

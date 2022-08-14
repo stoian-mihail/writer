@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\News;
+use App\Models\Post;
+use App\Models\Product;
+use App\Models\Fragment;
+use App\Models\PostCategory;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +28,28 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $categories = PostCategory::all();
+        $books = Product::all();
+        $mainPostType = 'articole';
+        $mainPost = Post::where('is_main', true)->latest()->first();
+        $linkToMain  = $mainPost ? route('posts.show', $mainPost) : '#';
+        // dd($linkToMain);
+        if ($mainPost == null) {
+            $mainPostType = 'fragmente';
+            $mainPost = Fragment::where('is_main', true)->first();
+            $linkToMain = $mainPost ? route('fragments.show', ['volume' => $mainPost->volume, 'fragment' => $mainPost]) : '#';
+            if ($mainPost  == null) {
+                $mainPostType = 'evenimente';
+                $mainPost = News::where('is_main', true)->latest()->first();
+                $linkToMain  = $mainPost ? route('news.show', $mainPost) : '#';
+                if ($mainPost == null) {
+                    $mainPostType = 'articole';
+                    $mainPost = Post::latest()->first();
+                }
+            }
+        }
+
+
+        return view('home', compact('categories', 'books', 'mainPost', 'mainPostType', 'linkToMain'));
     }
 }

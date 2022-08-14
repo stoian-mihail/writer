@@ -2,7 +2,7 @@
 @section("content")
 
 <h5>Adauga articol</h5>
-<div class="row">
+<div class="row mb-5">
     <div class="col-md-12" id="form-div">
         <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}'
             enctype="multipart/form-data">
@@ -39,6 +39,20 @@
                     name='text'>{{ $post->text }}</textarea>
 
             </div>
+            <div class="form-group">
+                <label for="date" class="me-2">Cuvinte cheie:</label>
+                <select name="tags[]" class="form-control" id="tags" multiple="multiple">
+                    <option disabled>Adauga cuvinte</option>
+                    @foreach($tags as $tag)
+                    <option @if(old('tags')==$tag->id)
+                        selected
+                        @endif
+                        value="{{$tag->id}}">{{$tag->name}}</option>
+                    @endforeach
+                </select>
+
+            </div>
+
 
             <div class="form-group">
                 <label for="post_meta_title">SEO: {{"<title>"}} tag (optional)</label>
@@ -71,29 +85,37 @@
 
 
                 </div>
-                <div class="col-6">
+                @if ($post->photo)
+                <div class="col-6 thumb_edit_container">
                     <div class="row justify-content-center">
                         <h5>Poza curenta:</h5>
                     </div>
                     <div class="row justify-content-center">
                         <div class="col-6">
-                            <img src="{{$post->photo->thumbnail->file_url}}" alt="event image" class="img-fluid">
+                            <img src="{{ $post->photo->thumbnail->file_url}}" id="current_thumbnail" alt="event image"
+                                class="img-fluid">
                             <div class="row">
                                 <div class="col-12">
                                     <button type="button" class="btn btn-primary w-100"
                                         onclick="previewFile('{{$post->photo->file_url}}')">Editeaza</button>
                                 </div>
+                                <div class="col-12">
+
+                                    <button type="button" class="btn btn-danger w-100"
+                                        onclick="showModal({{ $post->photo->id}})">Sterge poza</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
+                @endif
+
             </div>
             <div class="form-group">
                 <strong>Schimba thumbnail</strong>
 
                 <div class="custom-file">
-                    {{-- <input type="hidden" name="albumImage" value=""> --}}
+                    <input type="hidden" name="albumImage" value="">
 
                     <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
                         onchange="previewFiles(this.files)" lang="eng" name="albumImage[]">
@@ -102,7 +124,7 @@
             </div>
 
 
-            <div class="row justify-content-end my-5">
+            <div class="row justify-content-end mt-5">
                 <input type='submit' class='btn btn-primary' value="Salveaza modificarile">
             </div>
             <div class="row justify-content-center" id="preview"></div>
@@ -134,24 +156,79 @@
         </div>
     </div>
 </div>
+@include('admin.deletemodal',['object'=>"imaginea"])
 
 @endsection
 @section('scripts')
 <script>
     $('#post_categories').select2({
-    //     // tags: true
-    //    placeholder: 'Alege categorie'
-    //     , maximumSelectionLength: 5
-    //     , tokenSeparators: [',']
-    //     , "language": {
-    //         "noResults": function() {
-    //             return "Scrie tagul si apasa enter!";
-    //         }
-    //     }
-    //     , escapeMarkup: function(markup) {
-    //         return markup;
-    //     }
+
     });
+
+    function showModal(id) {
+                $('#deletemodal').modal('show');
+                var modalDialog = $(".modal-dialog");
+                modalDialog.css("margin-top", Math.max(0, ($(window).height() - modalDialog.height()) / 3));
+                $('#delete-item-button').attr('data-id',id)
+            }
+
+
+
+        function deleteItem(event){
+            let target_id = event.currentTarget.dataset.id;
+            let formData = new FormData();
+                formData.append('photo_id',target_id );
+            $.ajax({
+            method: 'post',
+            processData: false,
+            contentType: false,
+            async: true,
+            cache: false,
+            data: formData,
+            enctype: 'multipart/form-data',
+            url: '{{route("admin.posts.delete.photo")}}',
+            encode: true
+        })
+        // using the done promise callback
+        .done(function (data, textStatus, jqXHR) {
+            if(data.success){
+                $('#deletemodal').modal('hide');
+                $('.thumb_edit_container').html('');
+                // $('#preview').hmtl('');
+            }
+
+
+        });
+        }
+
+
+
+
+    var post = @json($post);
+
+    var dataTags = $.map(post.tags, function(obj) {
+        obj.id = obj.name;
+        obj.text = obj.name;
+        obj.selected = true;
+        return obj;
+    });
+
+    $('#tags').select2({
+     tags: true,
+       placeholder: 'Alege categorie'
+       , data: dataTags
+        , maximumSelectionLength: 5
+        , tokenSeparators: [',']
+        , "language": {
+            "noResults": function() {
+                return "Scrie tagul si apasa enter!";
+            }
+        }
+        , escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+
 
 </script>
 
@@ -395,7 +472,10 @@ $(document).ready(function () {
     enableOrientation: true,
     mouseWheelZoom: 'ctrl'
     });
+
+
 });
+
 
 
 // `await` can only be used in an async body, but showing it here for simplicity.
@@ -418,7 +498,7 @@ function uploadCropped(formData) {
         // using the done promise callback
         .done(function (data, textStatus, jqXHR) {
             if (data.success) {
-                removeFile();
+                location.reload(true);
 
             } else {
                 removeFile();
@@ -454,10 +534,10 @@ async function getFileFromUrl(url, name, defaultType = 'image/jpeg'){
 
 async function previewFile(files) {
     let file = await getFileFromUrl(files, 'imagine.jpg');
-    var thumbSrc;
-    let photo_id = @json($post->photo->id);
+    let thumbSrc;
+    let photo_id = @json($post->photo? $post->photo->id:'');
     let photo_model = 'App\\Models\\PostPhoto';
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function () {
         thumbSrc = reader.result;
@@ -475,9 +555,6 @@ async function previewFile(files) {
                 formData.append('image', blob, 'imagine_cropped');
                 formData.append('photo_id',photo_id )
                 formData.append('photo_model',photo_model )
-
-                console.log(blob);
-
                 uploadCropped(formData);
             });
         });
