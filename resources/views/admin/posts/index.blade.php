@@ -3,8 +3,8 @@
 @if (Session::has('message'))
 <div class="alert alert-info">{{ Session::get('message') }}</div>
 @endif
-<div class="content">
-    <div class="row justify-content-center mt-3">
+<div class="content container">
+    <div class="row m-0 justify-content-center mt-3">
         <div class="col-12 col-md-10 col-lg-8 text-center">
             <h1 class="text-underline">Articole blog</h1>
             <div class="row">
@@ -31,7 +31,7 @@
                                     href="{{route('admin.posts.edit', ['post'=>$post])}}">Editeaza</a>
                             </div>
                             <div class="row m-0 mt-2">
-                                <form action="{{route('admin.posts.delete',$post->id)}}" class="delete_form w-100"
+                                <form action="{{route('admin.posts.delete',$post->id)}}" class="delete_form w-100 p-0"
                                     method="post" id="delete_form{{$post->id}}" name="delete_form{{$post->id}}">
                                     <input type="hidden" value="{{$post->id}}">
                                     @csrf
@@ -50,7 +50,7 @@
 
         </div>
     </div>
-    <div class="row mt-4 justify-content-center">{{ $posts->links() }}</div>
+    <div class="row m-0 mt-4 justify-content-center">{{ $posts->links() }}</div>
     @include('admin.deletemodal', ['object'=>'articolul'])
 </div>
 @endsection
@@ -75,4 +75,6 @@
         }
 
 </script>
+<script src="{{ asset('/js/filterBar.js') }}" type="text/javascript"></script>
+
 @endsection

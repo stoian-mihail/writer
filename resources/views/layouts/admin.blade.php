@@ -16,90 +16,89 @@
 
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito" crossorigin="anonymous">
-
-
-    <link href="{{ asset('/css/binshopsblog_admin_css.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    {{--
+    <link href="{{ asset('/css/binshopsblog_admin_css.css') }}" rel="stylesheet"> --}}
 
     <link href="{{ asset('/css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/croppie.css') }}" rel="stylesheet">
 
-    <script src="{{ asset('/js/jquery-3.4.1.min.js') }}"> </script>
-    <script src="{{asset('/js/popper.min.js')}}"></script>
-    <script src="{{asset('/js/bootstrap.min.js')}}"></script>
-    <script src="{{ asset('js/croppie.js') }}" type="text/javascript"></script>
-
-    <link href="/css/select2.min.css" rel="stylesheet" />
-    <script src="/js/select2.min.js"></script>
+    <script src="{{ asset('/js/jquery-3.4.1.min.js') }}" type="text/javascript"> </script>
+    <script src="{{ asset('/js/select2.min.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('/js/croppie.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/js/bootstrap.bundle.min.js')}}" type="text/javascript"></script>
+    <link href="{{ asset('/css/sidebars.css')}}" rel="stylesheet">
+    <link href="{{ asset('/css/select2.min.css')}}" rel="stylesheet" />
 
 </head>
 
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-            <div class="container">
-                <a class="navbar-brand binshops-blog-title" href="{{ route('dashboard') }}">
-                    Dashboard
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<body class="h-100">
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
 
-                    </ul>
 
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
-                        <li class="nav-item ">
-                            <a class="nav-link mr-5" href="{{ route('home') }}">Mergi la site </a>
+    <main class="h-100">
 
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+        <div class='row h-100 m-0'>
+            <div class="col-auto p-0">
+                @include("layouts.sidebar2")
             </div>
-        </nav>
 
-        <main class="py-4">
-            <div class="container">
-                <div class='row full-width-div nav-bar-full'>
-                    <div class='list-group-color'>
-                        @include("layouts.sidebar")
+            <div class='col main-content p-0'>
+                <div class="row m-0 w-100">
 
-                    </div>
-                    <div class='col-md-9 main-content'>
+                    <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+                        <div class="container-fluid">
 
-                        @if (isset($errors) && count($errors))
-                        <div class="alert alert-danger">
-                            <b>Sorry, but there was an error:</b>
-                            <ul class='m-0'>
-                                @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#adminNavbar" aria-controls="adminNavbar"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse" id="adminNavbar">
+                                <ul class="navbar-nav ms-auto d-flex flex-row justify-content-end w-100">
+                                    <li class="nav-item" style="margin-right:auto;">
+                                        <a class="nav-link" href="{{ route('home') }}">Mergi la site </a>
+                                    </li>
+
+                                    <li class="nav-item w-25">
+                                        <form>
+                                            <input class="form-control" type="text" placeholder="Search"
+                                                aria-label="Search">
+                                        </form>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
+                                    </li>
+                                </ul>
+
+                            </div>
                         </div>
-                        @endif
+                    </nav>
 
-
-                        @yield('content')
-                    </div>
                 </div>
+                @if (isset($errors) && count($errors))
+                <div class="alert alert-danger">
+                    <b>Sorry, but there was an error:</b>
+                    <ul class='m-0'>
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+                @yield('content')
             </div>
-        </main>
-    </div>
+        </div>
+
+    </main>
 
 </body>
 @yield('scripts')

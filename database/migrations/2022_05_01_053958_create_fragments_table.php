@@ -24,7 +24,9 @@ class CreateFragmentsTable extends Migration
             $table->boolean('is_main')->default(false);
             $table->foreign('volume_id')->references('id')->on('products')->onDelete('set null');
             $table->string('uuid');
+            $table->tinyInteger('status')->default(0);
             $table->softDeletes();
+            $table->date('published_at');
             $table->timestamps();
         });
     }

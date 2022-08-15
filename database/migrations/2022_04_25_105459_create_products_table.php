@@ -25,9 +25,10 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('set null');
             $table->string('uuid');
+            $table->tinyInteger('status')->default(0);
             $table->softDeletes();
             $table->string('storage_folder');
-
+            $table->date('published_at');
             $table->timestamps();
         });
     }

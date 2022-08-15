@@ -25,7 +25,9 @@ class CreatePostsTable extends Migration
             $table->foreign('category_id')->references('id')->on('post_categories')->onDelete('set null');
             $table->string('uuid');
             $table->string('storage_folder');
+            $table->tinyInteger('status')->default(0);
             $table->softDeletes();
+            $table->date('published_at');
             $table->timestamps();
         });
     }

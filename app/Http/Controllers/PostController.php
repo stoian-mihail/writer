@@ -42,10 +42,23 @@ class PostController extends Controller
     {
 
         $input_data = $request->all();
+
         $currentURL = url()->full();
 
+        $posts = Post::with('category')
+            ->when(isset($input_data['status']) && $input_data['status'] != 'default', function ($query) use ($input_data) {
+                    $query->where('status', $input_data['status']);
+                     })
+            ->when(isset($input_data['category']) && $input_data['category'] != 'default' , function ($query) use ($input_data) {
+                        $query->whereHas('category', function ($query) use ($input_data) {
+                            $query->where('id', $input_data['category']);
+                        });
+                    })
+            ->when(isset($input_data['order_by']) && $input_data['order_by'] != 'default', function ($query) use ($input_data) {
+                        $query->orderBy('created_at', $input_data['order_by']);
+                    })
+            ->paginate(24);
 
-        $posts = Post::latest()->paginate(24);
         $route  =  route('admin.posts.index');
         $categories = PostCategory::all();
         $posts->withPath($currentURL);

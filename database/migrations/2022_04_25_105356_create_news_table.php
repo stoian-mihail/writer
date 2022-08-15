@@ -26,7 +26,8 @@ class CreateNewsTable extends Migration
             $table->boolean('is_main')->default(false);
             $table->string('uuid');
             $table->string('storage_folder');
-
+            $table->tinyInteger('status')->default(0);
+            $table->date('published_at');
             $table->softDeletes();
             $table->timestamps();
         });
