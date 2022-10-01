@@ -27,7 +27,7 @@ class CreatePostsTable extends Migration
             $table->string('storage_folder');
             $table->tinyInteger('status')->default(0);
             $table->softDeletes();
-            $table->date('published_at');
+            $table->date('published_at')->nullable();
             $table->timestamps();
         });
     }

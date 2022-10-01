@@ -28,7 +28,7 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('status')->default(0);
             $table->softDeletes();
             $table->string('storage_folder');
-            $table->date('published_at');
+            $table->date('published_at')->nullable();
             $table->timestamps();
         });
     }

@@ -26,7 +26,7 @@ class CreateFragmentsTable extends Migration
             $table->string('uuid');
             $table->tinyInteger('status')->default(0);
             $table->softDeletes();
-            $table->date('published_at');
+            $table->date('published_at')->nullable();
             $table->timestamps();
         });
     }
