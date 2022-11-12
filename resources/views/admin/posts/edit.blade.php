@@ -2,7 +2,7 @@
 @section("content")
 
 <h5>Adauga articol</h5>
-<div class="row mb-5">
+<div class="row m-0 mb-5">
     <div class="col-md-12" id="form-div">
         <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}'
             enctype="multipart/form-data">
