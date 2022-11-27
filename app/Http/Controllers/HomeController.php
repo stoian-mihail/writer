@@ -48,8 +48,14 @@ class HomeController extends Controller
                 }
             }
         }
+        $featured_news = News::where('is_main', false)->latest()->first();
+        $featured_fragment = Fragment::where('is_main', false)->latest()->first();
+        $latest_posts = Post::where('is_main', false)->latest()->get();
+        $latest_books = Product::latest()->get();
 
 
-        return view('home', compact('categories', 'books', 'mainPost', 'mainPostType', 'linkToMain'));
+
+
+        return view('home', compact('categories', 'books', 'mainPost', 'mainPostType', 'linkToMain', 'featured_news', 'featured_fragment', 'latest_posts','latest_books'));
     }
 }

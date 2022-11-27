@@ -63,6 +63,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store-media', [App\Http\Controllers\MultimediaController::class, 'store'])->name('admin.media.store');
     Route::post('/delete-media/{media}', [App\Http\Controllers\MultimediaController::class, 'destroy'])->name('admin.media.delete');
 
+    Route::get('/rezultate-cautare', [App\Http\Controllers\SearchController::class, 'index'])->name('admin.search.index');
+
+
     // about me section
 
     Route::get('/admin/about-me', [App\Http\Controllers\SiteSettingController::class, 'editAbout'])->name('admin.about');
@@ -91,3 +94,6 @@ Route::get('/evenimente', [App\Http\Controllers\NewsController::class, 'index'])
 
 Route::get('/fragmente/{volume}#{fragment}', [App\Http\Controllers\FragmentController::class, 'show'])->name('fragments.show');
 Route::get('/fragmente', [App\Http\Controllers\FragmentController::class, 'index'])->name('fragments.index');
+
+Route::get('/carti', [App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
+Route::get('/carti/{product}', [App\Http\Controllers\ProductController::class, 'show'])->name('products.show');

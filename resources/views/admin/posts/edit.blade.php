@@ -1,169 +1,13 @@
 @extends("layouts.admin")
 @section("content")
 
-<h5>Adauga articol</h5>
-<div class="row m-0 mb-5">
-    <div class="col-md-12" id="form-div">
-        <form id="add_post_form" method='post' action='{{route("admin.posts.update", $post)}}'
-            enctype="multipart/form-data">
-
-            @csrf
-            <div class="form-group">
-                <label for="title">Titlu articol</label>
-                <input type="text" class="form-control" required id="title" aria-describedby="title_help"
-                    value="{{$post->title}}" placeholder="Scrie titlu articol" name='title'>
-                @error('title')
-                <p>{{ $message }}</p>
-                @enderror
-            </div>
-            <div class="form-group">
-                <label for="date" class="me-2">Categorie articol:</label>
-                <select name="category_id" class="form-control" required id="post_categories">
-                    <option disabled selected>Alege categorie</option>
-                    @foreach($categories as $category)
-                    <option @if($post->category_id == $category->id)
-                        selected
-                        @endif
-                        value="{{$category->id}}">{{$category->name}}</option>
-                    @endforeach
-                </select>
-
-            </div>
-            <div class="form-group">
-                <label for="text">Text articol
-
-                    (HTML)
-
-                </label>
-                <textarea style='min-height:600px;' required class="form-control" id="text" aria-describedby="text_help"
-                    name='text'>{{ $post->text }}</textarea>
-
-            </div>
-            <div class="form-group">
-                <label for="date" class="me-2">Cuvinte cheie:</label>
-                <select name="tags[]" class="form-control" id="tags" multiple="multiple">
-                    <option disabled>Adauga cuvinte</option>
-                    @foreach($tags as $tag)
-                    <option @if(old('tags')==$tag->id)
-                        selected
-                        @endif
-                        value="{{$tag->id}}">{{$tag->name}}</option>
-                    @endforeach
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-                <label for="post_meta_title">SEO: {{"<title>"}} tag (optional)</label>
-                <input class="form-control" id="post_meta_title" aria-describedby="post_meta_title_help"
-                    name='meta_title' type='text' value="{{$post->meta_title}}">
-            </div>
-
-            <div class="form-group">
-                <label for="post_meta_description">Meta Desc (optional)</label>
-                <textarea class="form-control" id="post_meta_description" aria-describedby="post_meta_description_help"
-                    name='meta_description'>{{ $post->meta_description }}</textarea>
-                <small id="post_meta_description_help" class="form-text text-muted">Meta description (optional)</small>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <div class="form-group pl-2">
-                        <div class="row">Pune pe prima pagina</div>
-                        <label for="da">Da:</label>
-                        <input type="radio" id="da" name="is_main" value='1' @if($post->is_main)
-                        checked
-                        @endif
-                        >
-                        <br>
-                        <label for="nu">NU</label>
-                        <input type="radio" id="nu" name="is_main" value='0' @if(!$post->is_main)
-                        checked
-                        @endif
-                        >
-                    </div>
-
-
-                </div>
-                @if ($post->photo)
-                <div class="col-6 thumb_edit_container">
-                    <div class="row justify-content-center">
-                        <h5>Poza curenta:</h5>
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col-6">
-                            <img src="{{ $post->photo->thumbnail->file_url}}" id="current_thumbnail" alt="event image"
-                                class="img-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-primary w-100"
-                                        onclick="previewFile('{{$post->photo->file_url}}')">Editeaza</button>
-                                </div>
-                                <div class="col-12">
-
-                                    <button type="button" class="btn btn-danger w-100"
-                                        onclick="showModal({{ $post->photo->id}})">Sterge poza</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-            </div>
-            <div class="form-group">
-                <strong>Schimba thumbnail</strong>
-
-                <div class="custom-file">
-                    <input type="hidden" name="albumImage" value="">
-
-                    <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
-                        onchange="previewFiles(this.files)" lang="eng" name="albumImage[]">
-                    <label class="custom-file-label" for="albumImage[]">Alege fotografiile</label>
-                </div>
-            </div>
-
-
-            <div class="row justify-content-end mt-5">
-                <input type='submit' class='btn btn-primary' value="Salveaza modificarile">
-            </div>
-            <div class="row justify-content-center" id="preview"></div>
-
-        </form>
-    </div>
-</div>
-<div class="row justify-content-center">
-    <div class="col-auto">
-        <!-- This is the modal -->
-        <div class="modal" tabindex="-1" role="dialog" id="uploadimageModal">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-body p-0 pt-2">
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <div id="image-crop-div"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <span class="mr-5">Regleaza cu ajutorul scrollului sau al barei</span>
-                        <button type="button" onclick="removeFile()" class="btn btn-secondary"
-                            data-dismiss="modal">Anuleaza</button>
-                        <button id="cropresult" type="button" class="btn btn-success">Salveaza</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@include('admin.deletemodal',['object'=>"imaginea"])
+@include('admin.forms.posts.edit', ['route'=>'admin.posts.update' , 'post_type'=>'articol', 'post'=> $post])
 
 @endsection
 @section('scripts')
 <script>
-    $('#post_categories').select2({
 
-    });
+    $('#post_categories').select2();
 
     function showModal(id) {
                 $('#deletemodal').modal('show');
@@ -203,31 +47,6 @@
 
 
 
-
-    var post = @json($post);
-
-    var dataTags = $.map(post.tags, function(obj) {
-        obj.id = obj.name;
-        obj.text = obj.name;
-        obj.selected = true;
-        return obj;
-    });
-
-    $('#tags').select2({
-     tags: true,
-       placeholder: 'Alege categorie'
-       , data: dataTags
-        , maximumSelectionLength: 5
-        , tokenSeparators: [',']
-        , "language": {
-            "noResults": function() {
-                return "Scrie tagul si apasa enter!";
-            }
-        }
-        , escapeMarkup: function(markup) {
-            return markup;
-        }
-    });
 
 
 </script>
@@ -462,6 +281,34 @@ var bheight = window.innerWidth * 0.4;
 var uploadCrop;
 
 $(document).ready(function () {
+    
+    var post = @json($post);
+
+    var dataTags = $.map(post.tags, function(obj) {
+        obj.id = obj.name;
+        obj.text = obj.name;
+        obj.selected = true;
+        return obj;
+    });
+    console.log(dataTags);
+
+    $('#tags').select2({
+     tags: true,
+       placeholder: 'Alege cuvinte cheie'
+       , data: dataTags
+        , maximumSelectionLength: 5
+        , tokenSeparators: [',']
+        , "language": {
+            "noResults": function() {
+                return "Scrie tagul si apasa enter!";
+            }
+        }
+        , escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+
+
 
     uploadCrop = $('#image-crop-div').croppie({
     enableExif: true,

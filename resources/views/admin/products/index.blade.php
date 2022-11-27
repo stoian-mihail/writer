@@ -1,8 +1,7 @@
 @extends('layouts.admin')
 @section('content')
-@if (Session::has('message'))
-<div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
+
 <div class="content">
     <div class="row justify-content-center mt-3">
         <div class="col-12 col-md-10 col-lg-8 text-center">
@@ -28,7 +27,7 @@
                                     href="{{route('admin.products.edit', ['product'=>$post])}}">Editeaza</a>
                             </div>
                             <div class="row m-0 mt-2">
-                                <form action="{{route('admin.products.delete',$post->id)}}" class="delete_form w-100"
+                                <form action="{{route('admin.products.delete',$post->id)}}" class="delete_form w-100 p-0"
                                     method="post" id="delete_form{{$post->id}}" name="delete_form{{$post->id}}">
                                     <input type="hidden" value="{{$post->id}}">
                                     @csrf

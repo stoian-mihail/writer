@@ -1,16 +1,17 @@
 @extends("layouts.admin")
 @section("content")
 
-    <h5>Despre mine</h5>
-    <div class="row">
 
-        <div class="col-md-12" id="form-div">
-            <form id="add_post_form" method='post' action='{{route("admin.save.about")}}' enctype="multipart/form-data">
+    <div class="row justify-content-center text-center mt-3">
+
+        <div class="col-12 col-md-10" id="form-div">
+            <h5>{{$post_type}}</h5>
+            <form id="add_post_form" method='post' action='{{route("$route")}}' enctype="multipart/form-data">
 
                 @csrf
 
-                <div class="form-group">
-                    <label for="text">Text biografie
+                <div class="form-group mt-5">
+                    <label for="text">Text
 
                         (HTML)
 
@@ -20,10 +21,11 @@
 
                 </div>
 
-
-                <div class="row justify-content-end my-5">
-                    <input type='submit' name="submit_btn" class='btn btn-primary' value='Salveaza modificarile'>
+                <div class="row m-0 justify-content-end mt-5 me-2">
+                    <input type='submit' name="submit_btn" class='btn btn-primary btn-lg col-auto'
+                           value='Salveaza modificarile'>
                 </div>
+
 
             </form>
         </div>

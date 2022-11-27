@@ -10,7 +10,7 @@
                             </div>
                         </div>
                         <div class="row col-md-12 justify-content-center p-3">
-                                <button type="button" class="btn btn-success col-auto m-1" data-dismiss="modal">Anuleaza</button>
+                                <button type="button" class="btn btn-success col-auto m-1" data-bs-dismiss="modal">Anuleaza</button>
                                 <input id="delete-item-button" onclick="deleteItem(event)" type="button" data-id="" class="btn btn-secondary col-auto m-1" value="Sterge">
                         </div>
                     </div>

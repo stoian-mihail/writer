@@ -61,11 +61,26 @@
                                         <a class="nav-link" href="{{ route('home') }}">Mergi la site </a>
                                     </li>
 
-                                    <li class="nav-item w-25">
-                                        <form>
-                                            <input class="form-control" type="text" placeholder="Search"
-                                                aria-label="Search">
-                                        </form>
+                                    <li class="nav-item w-25 me-5">
+                                        <div class="row m-0">
+                                            <form class="col-12 px-1 my-2 my-lg-0" id="search_form" action="{{route('admin.search.index')}}">
+                                                <div class="row justify-content-center align-items-center">
+                                                    <div class="col-sm-6 p-0 mr-1">
+                                                        <input class="form-control" id="keywords" name="keywords" type="search" placeholder="Cauta" value="{{ !empty($search_criteria) ? $search_criteria['keywords'] : '' }}" aria-label="Cauta">
+                                                    </div>
+                                                    <div class="col-auto px-1 form-group my-1">
+                                                        <select class="form-control px-1" id="search_category" name="search_category">
+        
+                                                            <option @if(!empty($search_criteria) && $search_criteria['search_category']=='Post' ) selected @endif value="Post">articole</option>
+                                                            <option @if(!empty($search_criteria) && $search_criteria['search_category']=='Fragment' ) selected @endif value="Fragment">fragmente</option>
+                                                            <option @if(!empty($search_criteria) && $search_criteria['search_category']=='News' ) selected @endif value="News">evenimente</option>
+                                                            <option @if(!empty($search_criteria) && $search_criteria['search_category']=='Product' ) selected @endif value="Product">utilizatori</option>
+                                                        </select>
+                                                    </div>
+                                                    <button class="col-auto btn btn-dark btn-outline-light my-2 my-sm-1" type="submit">Cauta</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();
@@ -85,7 +100,7 @@
 
                 </div>
                 @if (isset($errors) && count($errors))
-                <div class="alert alert-danger">
+                <div class="alert alert-danger text-center">
                     <b>Sorry, but there was an error:</b>
                     <ul class='m-0'>
                         @foreach($errors->all() as $error)
@@ -94,6 +109,11 @@
                     </ul>
                 </div>
                 @endif
+
+                @if (Session::has('message'))
+                    <div class="alert alert-info text-center mt-2">{{ Session::get('message') }}</div>
+                @endif
+
                 @yield('content')
             </div>
         </div>

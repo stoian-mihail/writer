@@ -8,8 +8,10 @@ use App\Models\Product;
 use App\Models\Fragment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProductCategory;
 use Illuminate\Validation\Rule;
 use App\Http\Traits\seoUrlTrait;
+use App\Models\FragmentCategory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -24,10 +26,36 @@ class FragmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexAdmin()
+    public function indexAdmin(Request $request)
     {
-        $posts = Fragment::all();
-        return view('admin.fragments.index', compact('posts'));
+        // $posts = Fragment::all();
+        // return view('admin.fragments.index', compact('posts'));
+
+        $input_data = $request->all();
+
+        $currentURL = url()->full();
+
+        $posts = Fragment::with('volume')
+            ->when(isset($input_data['status']) && $input_data['status'] != 'default', function ($query) use ($input_data) {
+                    $query->where('status', $input_data['status']);
+                     })
+            ->when(isset($input_data['category']) && $input_data['category'] != 'default' , function ($query) use ($input_data) {
+                        $query->whereHas('volume', function ($query) use ($input_data) {
+                            $query->where('category_id', $input_data['category']);
+                        });
+                    })
+            ->when(isset($input_data['order_by']) && $input_data['order_by'] != 'default', function ($query) use ($input_data) {
+                        $query->orderBy('created_at', $input_data['order_by']);
+                    })
+            ->paginate(24);
+
+        $route  =  'admin.fragments.index';
+        $categories = ProductCategory::all();
+
+        $posts->withPath($currentURL);
+        
+        session(['filter_criteria' => $input_data]);
+        return view('admin.fragments.index', compact('posts', 'route', 'categories'))->with('filter_criteria', session('filter_criteria'));
     }
     public function index()
     {
@@ -43,9 +71,9 @@ class FragmentController extends Controller
     public function create()
     {
         $volumes = Product::select('id', 'prod_name')->get();
-
         return view('admin.fragments.create', [
-            'volumes' => $volumes
+            'volumes' => $volumes,
+            // 'categories'=>FragmentCagory::all()
         ]);
     }
 

@@ -73,50 +73,78 @@
                     </article>
                 </div>
             </div>
-            <div class="mt-5">
-                <h2 class="text-center">
-                    Cartile mele
-                </h2>
-                <div class="row justify-content-center">
-                    <div class="col">
-                        Carte 1
-                    </div>
-                    <div class="col">
-                        Carte 2
-                    </div>
-                    <div class="col">
-                        Carte3
-                    </div>
-                    <div class="col">
-                        Carte 4
-                    </div>
-                </div>
-                <div class="row">
-                    <button type="button" class="button btn btn-link">Vezi toate</button>
-                </div>
-            </div>
+
             <div class="mt-5 latest articles">
                 <h2 class="text-center">
                     Ultimele articole
                 </h2>
-                <div class="row justify-content-center">
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    @foreach ($latest_posts as $post)
                     <div class="col">
-                        Carte 1
+                        <a href="{{route('posts.show', ['post'=>$post])}}" class="blog-link">
+                            <article>
+                                <div class="card shadow-sm post-card-container">
+                                    @if ($post->photo)
+                                    <img src="{{$post->photo->thumbnail->file_url}}" alt="" class="img-thumbnail-post">
+                                    @endif
+                                    <div class="card-body">
+                                        <h2 class="post-thumb-title">{{$post->title}}</h2>
+                                        <p class="card-text">
+                                            @if ($post->photo)
+                                            {!! Illuminate\Support\Str::limit(strip_tags($post->text),250)!!}
+                                            @else
+                                            {!! Illuminate\Support\Str::limit(strip_tags($post->text),500)!!}
+            
+                                            @endif
+            
+                                        </p>
+                                        {{-- <div class="d-flex justify-content-between align-items-center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary">Citeste</button>
+                                            </div>
+                                        </div> --}}
+                                    </div>
+                                </div>
+                            </article>
+                        </a>
                     </div>
-                    <div class="col">
-                        Carte 2
-                    </div>
-                    <div class="col">
-                        Carte3
-                    </div>
-                    <div class="col">
-                        Carte 4
-                    </div>
+                    @endforeach
+            
                 </div>
                 <div class="row">
                     <button type="button" class="button btn btn-link">Vezi toate</button>
                 </div>
             </div>
+
+            <div class="mt-5 latest articles">
+                <h2 class="text-center">
+                    Cartile mele
+                </h2>
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    @foreach ($latest_books->take(3) as $product)
+                    <div class="col">
+                        <a href="{{route('products.show', ['product'=>$product])}}" class="blog-link">
+                            <article>
+                                <div class="card shadow-sm post-card-container">
+                                    @if ($product->photos()->first())
+                                    <img src="{{$product->photos()->first() ? $product->photos()->first()->thumbnail->file_url:''}}"
+                                    alt="post image" class="img-fluid">
+                                    @endif
+                              
+                                </div>
+                            </article>
+                        </a>
+                    </div>
+                    @endforeach
+            
+                </div>
+                <div class="row">
+                    <button type="button" class="button btn btn-link">Vezi toate</button>
+                </div>
+            </div>
+
 
 
         </div>

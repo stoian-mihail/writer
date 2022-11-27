@@ -1,50 +1,17 @@
 @extends('layouts.admin')
 @section('content')
-@if (Session::has('message'))
-<div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+
 <div class="content">
     <div class="row justify-content-center mt-3">
         <div class="col-12 col-md-10 col-lg-8 text-center">
+            
             <h1 class="text-underline">Fragmente</h1>
-
+            <div class="row">
+                @include('admin.components.filterBar')
+            </div>
             <div class="mt-5">
                 @foreach ($posts as $post)
-                <article>
-                    <div class="row mt-2 text-left">
-                        <div class="col-8">
-                            <div class="row">
-                                <a href="{{route('posts.show', $post)}}" class="text-primary">
-                                    <h2>{{$post->title}}</h2>
-                                </a>
-                            </div>
-
-                            <div class="row">
-                                <strong class="text-secondary">Volumul: {{$post->volume->prod_name}} </strong>
-
-                            </div>
-                            <div class="row">
-                                <strong class="text-secondary">Data: {{$post->created_at}}</strong>
-                            </div>
-                        </div>
-                        <div class="col-4 col-lg-2">
-                            <div class="row w-100 m-0">
-                                <a type="button" class="btn btn-primary w-100"
-                                    href="{{route('admin.fragments.edit', ['fragment'=>$post])}}">Editeaza</a>
-                            </div>
-                            <div class="row m-0 mt-2">
-                                <form action="{{route('admin.fragments.delete',$post->id)}}" class="delete_form w-100"
-                                    method="post" id="delete_form{{$post->id}}" name="delete_form{{$post->id}}">
-                                    <input type="hidden" value="{{$post->id}}">
-                                    @csrf
-                                    <button type="button" class="btn btn-danger w-100"
-                                        onclick="showModal({{$post->id}})">Sterge</button>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-                </article>
+                @include('admin.components.postListItem', ['post'=>$post,'edit_route'=>'admin.fragments.edit' ,'delete_route'=>'admin.fragments.delete'])
                 <hr>
                 @endforeach
             </div>

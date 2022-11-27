@@ -1,10 +1,10 @@
 @extends("layouts.admin")
-@section('header')
-{{-- <script src="{{ mix('/js/resize.js') }}" type="text/javascript"></script> --}}
-@endsection('header')
 
 @section("content")
-   <div class="row justify-content-center mb-5">
+<div class="container">
+
+
+   <div class="row justify-content-center text-center my-5">
     <h1>Imagini</h1>
     </div>
    @foreach($media as $key => $image)
@@ -38,7 +38,7 @@
    @include('admin.deletemodal',['object'=>"imaginea"])
 
 
-
+</div>
 @endsection
 @section('scripts')
 <script>

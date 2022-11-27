@@ -19,4 +19,8 @@ class News extends Model
     public function photo(){
         return $this->hasOne(NewsPhoto::class, 'belongs_id');
     }
+
+    public function category(){
+        return $this->belongsTo(NewsCategory::class, 'category_id');
+    }
 }

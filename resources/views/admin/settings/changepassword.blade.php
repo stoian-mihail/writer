@@ -2,7 +2,7 @@
 @section('content')
 <div class="container">
     {{-- @include('settings.navbar') --}}
-    <div class="row justify-content-center mt-3">
+    <div class="row text-center mt-3">
         <h5>Schimba parola</h5>
     </div>
     <div class="row justify-content-center">
@@ -53,7 +53,7 @@
 
                         </div>
 
-                        <div class="form-group row justify-content-end align-items-center mb-0">
+                        <div class="form-group row justify-content-end align-items-center mb-0 mt-2">
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Salveaza') }}

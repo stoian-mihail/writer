@@ -1,9 +1,10 @@
 @extends("layouts.admin")
 @section("content")
 
-    <h5>Adauga imagini</h5>
-    <div class="row">
-        <div class="col-md-12" id="form-div">
+   
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 col-md-10" id="form-div">
+            <h5>Adauga imagini</h5>
             <form id="add_media_form" method='post' action='{{route("admin.media.store")}}' enctype="multipart/form-data">
 
                 @csrf
@@ -14,15 +15,16 @@
                     <div class="custom-file">
                         {{-- <input type="hidden" name="albumImage" value=""> --}}
 
-                        <input type="file" class="custom-file-input" multiple="multiple" id="albumImage"
+                        <input type="file" class="custom-file-input form-control" multiple="multiple" id="albumImage"
                             onchange="previewFiles(this.files)" required
                             lang="eng" name="albumImage[]">
                         <label class="custom-file-label" for="albumImage[]">Alege fotografiile</label>
                     </div>
                 </div>
 
-                <div class="row justify-content-end my-5">
-                    <input type='submit' name="submit_btn" class='btn btn-primary' value='Adauga imagine'>
+                <div class="row m-0 justify-content-end mt-5 me-2">
+                    <input type='submit' name="submit_btn" class='btn btn-primary btn-lg col-auto'
+                           value='Adauga imagine'>
                 </div>
                 <div class="row justify-content-center" id="preview"></div>
 

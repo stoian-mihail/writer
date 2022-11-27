@@ -18,4 +18,7 @@ class Product extends Model
     public function photos(){
         return $this->hasMany(ProductPhoto::class, 'belongs_id', 'id');
     }
+    public function photo(){
+        return $this->hasOne(ProductPhoto::class, 'belongs_id', 'id');
+    }
 }

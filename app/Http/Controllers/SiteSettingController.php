@@ -62,7 +62,7 @@ class SiteSettingController extends Controller
     public function editAbout(Request $request)
     {
         $post = SiteSetting::first()->about;
-        return view('admin.about.about_me', compact('post'));
+        return view('admin.about.biography', compact('post'));
     }
 
     public function editConfidentiality(Request $request)

@@ -138,3 +138,6 @@ a.book-title-side:hover {
     color: black;
     text-decoration: none;
 }
+.pagination{
+    justify-content: center;
+}

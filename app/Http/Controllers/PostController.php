@@ -59,9 +59,11 @@ class PostController extends Controller
                     })
             ->paginate(24);
 
-        $route  =  route('admin.posts.index');
+        $route  =  'admin.posts.index';
         $categories = PostCategory::all();
+
         $posts->withPath($currentURL);
+        
         session(['filter_criteria' => $input_data]);
         return view('admin.posts.index', compact('posts', 'route', 'categories'))->with('filter_criteria', session('filter_criteria'));
     }
@@ -146,6 +148,7 @@ class PostController extends Controller
     {
         $categories = PostCategory::all();
         $tags = $post->tags;
+      
         return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
@@ -158,8 +161,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        // dd($request->all());
-        $input_data = $request->except(['tags', 'albumImage']);
+        $input_data = $request->except(['tags', 'albumImage', 'submit_btn']);
 
         $validator = Validator::make($request->all(), [
             'title' => ['string', 'min:2', 'max:1000', 'required', Rule::unique('posts')->ignore($post->title, 'title')],
@@ -169,7 +171,7 @@ class PostController extends Controller
             'tags.*' => ['regex:/^[a-zA-Z0-9\s-]{2,15}$/'],
             'tags' => ['array'],
             'albumImage' => ['array', 'nullable', 'max:12'],
-            'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'required'],
+            'albumImage.*' => ['mimes:jpg,jpeg,png,bmp', 'max:20000', 'nullable'],
         ]);
         if ($validator->passes()) {
             if ($input_data['is_main'] == true) {
@@ -178,7 +180,10 @@ class PostController extends Controller
             $seo_title = $this->seoUrl($input_data['title']);
             $post->update($input_data);
             $post->slug = $seo_title;
+            // de imbunatatit denumirea, sau de scapat de variabila input data aici sau sus
+
             $input_data = $request->all();
+
             if ($input_data['albumImage']) {
                 if ($post->photo) {
                     $post->photo()->delete();

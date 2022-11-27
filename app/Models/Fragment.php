@@ -18,4 +18,5 @@ class Fragment extends Model
     public function volume(){
         return $this->belongsTo(Product::class, 'volume_id');
     }
+   
 }
