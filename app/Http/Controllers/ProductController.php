@@ -26,7 +26,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Product::all();
+        return view('catalog.products.index', compact('posts'));
     }
     public function indexAdmin()
     {

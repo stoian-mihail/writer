@@ -126,7 +126,10 @@ class FragmentController extends Controller
      */
     public function show(Fragment $fragment)
     {
-        return view('fragments.show', $fragment);
+
+        $categories = ProductCategory::all();
+
+        return view('fragments.show', compact('categories', 'fragment'));
     }
 
     /**

@@ -87,7 +87,7 @@
                                 <a class="nav-link" href="{{route('news.index')}}">Evenimente</a>
                             </li>
                             <li class="nav-item mx-2">
-                                <a class="nav-link active" aria-current="page" href="#">Carti</a>
+                                <a class="nav-link active" aria-current="page" href="{{route('products.index')}}">Carti</a>
                             </li>
                             <li class="nav-item mx-2">
                                 <a class="nav-link" href="#">Despre mine</a>
@@ -106,16 +106,14 @@
         </div>
     </div>
 
-
-    @yield('content')
+    <div style="min-height: 100vh;">
+        @yield('content')
+    </div>
+   
 
 
     <footer class="blog-footer">
-        <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a
-                href="https://twitter.com/mdo">@mdo</a>.</p>
-        <p>
-            <a href="#">Back to top</a>
-        </p>
+        Mihail Soare
     </footer>
 
 

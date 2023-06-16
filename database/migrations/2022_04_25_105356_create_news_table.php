@@ -20,7 +20,9 @@ class CreateNewsTable extends Migration
             $table->text('text');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
-            $table->date('date')->nullable();
+            $table->string('date')->nullable();
+            $table->string('location')->nullable();
+
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('news_categories')->onDelete('cascade');
             $table->boolean('is_main')->default(false);

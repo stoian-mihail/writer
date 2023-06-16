@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Models\Post;
+use App\Models\Product;
 use App\Models\Fragment;
 use App\Models\NewsPhoto;
 use Illuminate\Support\Str;
@@ -32,7 +33,11 @@ class NewsController extends Controller
     public function index()
     {
         $posts = News::all();
-        return view('catalog.news.index', compact('posts'));
+        $books = Product::all();
+
+        $categories = NewsCategory::all();
+
+        return view('catalog.news.index', compact('posts','categories','books'));
     }
     public function indexAdmin(Request $request)
     {
@@ -42,23 +47,23 @@ class NewsController extends Controller
 
         $posts = News::with('category')
             ->when(isset($input_data['status']) && $input_data['status'] != 'default', function ($query) use ($input_data) {
-                    $query->where('status', $input_data['status']);
-                     })
-            ->when(isset($input_data['category']) && $input_data['category'] != 'default' , function ($query) use ($input_data) {
-                        $query->whereHas('category', function ($query) use ($input_data) {
-                            $query->where('id', $input_data['category']);
-                        });
-                    })
+                $query->where('status', $input_data['status']);
+            })
+            ->when(isset($input_data['category']) && $input_data['category'] != 'default', function ($query) use ($input_data) {
+                $query->whereHas('category', function ($query) use ($input_data) {
+                    $query->where('id', $input_data['category']);
+                });
+            })
             ->when(isset($input_data['order_by']) && $input_data['order_by'] != 'default', function ($query) use ($input_data) {
-                        $query->orderBy('created_at', $input_data['order_by']);
-                    })
+                $query->orderBy('created_at', $input_data['order_by']);
+            })
             ->paginate(24);
 
         $route  = 'admin.news.index';
         $categories = NewsCategory::all();
 
         $posts->withPath($currentURL);
-        
+
         session(['filter_criteria' => $input_data]);
         return view('admin.news.index', compact('posts', 'route', 'categories'))->with('filter_criteria', session('filter_criteria'));
     }
@@ -126,7 +131,14 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        return view('catalog.news.show', ['news' => $news]);
+
+        $books = Product::all();
+        $categories = NewsCategory::all();
+        return view('catalog.news.show', [
+            'post' => $news,
+            'books' => $books,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -156,7 +168,7 @@ class NewsController extends Controller
         $post = $news;
 
         $input_data = $request->except(['albumImage', 'submit_btn']);
-  
+
         $validator = Validator::make($request->all(), [
             'title' => ['string', 'min:2', 'regex:/^[a-zA-Z0-9\s-]{2,1000}$/', 'max:1000', 'required', Rule::unique('fragments')->ignore($post->title, 'title')],
             'text' => ['string', 'min:2', 'required'],
@@ -181,7 +193,7 @@ class NewsController extends Controller
                 }
                 Storage::deleteDirectory("public/news/$post->uuid/");
 
-              
+
                 $this->storeImages($input_data, "NewsPhoto", "news/$post->uuid", $seo_title, $post);
             }
             $post->save();

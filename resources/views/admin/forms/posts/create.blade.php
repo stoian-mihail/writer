@@ -30,9 +30,29 @@
                 </select>
             </div>
             @endisset
+
+            @if($post_type == 'eveniment')
+            <div class="form-group mt-3">
+                <label for="date">Data {{$post_type}} (optional)</label>
+                <input type="text"  name='date' class="form-control" required id="date" aria-describedby="date_help"
+                       value="{{old('date')}}" placeholder="Scrie data evenimentului">
+                @error('date')
+                <p>{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="form-group mt-3">
+                <label for="location">Adresa {{$post_type}} (optional)</label>
+                <input type="text"  name='location' class="form-control" required id="location" aria-describedby="location_help"
+                       value="{{old('location')}}" placeholder="Scrie adresa evenimentului">
+                @error('location')
+                <p>{{ $message }}</p>
+                @enderror
+            </div>
+            
+            @endif
             @isset($categories)
             <div class="form-group mt-3">
-                <label for="date" class="me-2">Categorie {{$post_type}}:</label>
+                <label for="post_categories" class="me-2">Categorie {{$post_type}}:</label>
                 <select name="category_id" class="form-control" required id="post_categories">
                     <option disabled selected>Alege categorie</option>
                     @foreach($categories as $category)
